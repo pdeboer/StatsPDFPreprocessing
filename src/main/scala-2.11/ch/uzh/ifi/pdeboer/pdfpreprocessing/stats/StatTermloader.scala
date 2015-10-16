@@ -8,8 +8,8 @@ import scala.io.Source
 /**
  * Created by pdeboer on 16/06/15.
  */
-class StatTermloader {
-	val deltas = {
+object StatTermloader {
+	lazy val deltas = {
 
 		val methodToDelta = Source.fromFile("deltas.csv", "UTF-8").getLines().map(l => {
 			val cols = l.split(",")
