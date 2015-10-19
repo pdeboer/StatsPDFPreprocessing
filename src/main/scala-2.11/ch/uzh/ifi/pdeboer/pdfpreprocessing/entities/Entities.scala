@@ -14,7 +14,9 @@ case class Paper(name: String, file: File, journal: Journal) {
 	lazy val lowerCaseContents = contents.map(_.toLowerCase)
 }
 
-case class StattermOccurrence(term: StatisticalTerm, paper: Paper, startIndex: Int, endIndex: Int, pageNr: Int)
+case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, paper: Paper, startIndex: Int, endIndex: Int, page: Int) {
+	def actualText = paper.contents(page).substring(startIndex, endIndex)
+}
 
 class StatisticalTerm(name: String, synonyms: List[String]) {
 	def searchTerm = name.toLowerCase
