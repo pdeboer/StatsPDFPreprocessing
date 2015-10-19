@@ -6,7 +6,6 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{StatisticalTerm, Paper}
  * Created by pdeboer on 16/10/15.
  */
 class StatTermSearcher(paper: Paper, terms: List[StatisticalTerm]) {
-
 	case class SearchTermMatch(term: StatisticalTerm, matchedExpression: String, startIndex: Int, endIndex: Int, page: Int) {
 		def actualText = paper.contents(page).substring(startIndex, endIndex)
 	}
@@ -30,10 +29,8 @@ class StatTermSearcher(paper: Paper, terms: List[StatisticalTerm]) {
 		})
 	}
 
-
 	def removeDuplicates(withDuplicates: List[SearchTermMatch]) = {
-		private case class CorrectHashCode(term: StatisticalTerm, page: Int, startIndex: Int)(val searchTermMatch: SearchTermMatch)
-		withDuplicates.map(d => CorrectHashCode(d.term, d.page, d.startIndex)(d)).toSet.map(_.searchTermMatch)
+		withDuplicates.groupBy(d => (d.term, d.page, d.startIndex)).map(_._2.head)
 	}
 
 	def buildRegexForString(searchString: String): List[String] = {

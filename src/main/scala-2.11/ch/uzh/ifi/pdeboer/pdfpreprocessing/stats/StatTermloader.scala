@@ -45,7 +45,7 @@ object StatTermloader {
 		}
 
 		methods
-	}
+	}.toList
 
 	def methods = terms.map(_.methodName).toList
 

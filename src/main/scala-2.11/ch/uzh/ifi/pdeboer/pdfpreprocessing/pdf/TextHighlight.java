@@ -157,12 +157,13 @@ public class TextHighlight extends PDFTextStripper {
 							found = true;
 						}
 					}
+					/* dont get this. why do we need it?
 				} else if (markingPattern.toString().contains("\\b")) {
 					for (Match markingMatch : textCache.match(searchMatch.positions, PatternHelper.formatPatternWithWordBoundary(markingPattern))) {
 						if (markupMatch(color, contentStream, markingMatch)) {
 							found = true;
 						}
-					}
+					}*/
 				} else {
 					System.out.println("Cannot highlight: " + markingPattern.pattern() + " on page " + (pageNr - 1));
 				}
