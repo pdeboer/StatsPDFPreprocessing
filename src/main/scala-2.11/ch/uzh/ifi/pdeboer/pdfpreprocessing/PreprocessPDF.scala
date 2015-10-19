@@ -2,6 +2,7 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing
 
 import java.io.File
 
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFLoader
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
@@ -21,5 +22,9 @@ object PreprocessPDF extends App with LazyLogging {
 
 	FileUtils.emptyDir(new File(OUTPUT_DIR))
 
-	
+	val allPapers = new PDFLoader(new File(INPUT_DIR)).getPapers()
+	allPapers.par.foreach(paper => {
+
+	})
+
 }
