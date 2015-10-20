@@ -1,4 +1,4 @@
-package ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf
+package ch.uzh.ifi.pdeboer.pdfpreprocessing.stats
 
 import java.util.regex.Pattern
 

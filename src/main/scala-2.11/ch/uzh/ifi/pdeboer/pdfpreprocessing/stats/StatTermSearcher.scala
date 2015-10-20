@@ -1,6 +1,6 @@
-package ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf
+package ch.uzh.ifi.pdeboer.pdfpreprocessing.stats
 
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{StatTermOccurrence, StatisticalTerm, Paper}
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{Paper, StatTermOccurrence, StatisticalTerm}
 
 /**
  * Created by pdeboer on 16/10/15.

@@ -2,7 +2,8 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing.entities
 
 import java.io.File
 
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.{UniqueSearchStringIdentifier, PDFTextExtractor}
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFTextExtractor
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.UniqueSearchStringIdentifier
 
 /**
  * Created by pdeboer on 16/10/15.
@@ -22,7 +23,7 @@ case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, 
 
 case class UniqueSearchTerm(term: String, statTerm: String)
 
-class StatisticalTerm(name: String, synonyms: List[String]) {
+sealed class StatisticalTerm(name: String, synonyms: List[String]) {
 	def searchTerm = name.toLowerCase
 }
 
