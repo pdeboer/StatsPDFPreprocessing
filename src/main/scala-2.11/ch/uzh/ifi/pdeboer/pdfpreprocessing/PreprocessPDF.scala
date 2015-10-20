@@ -26,10 +26,10 @@ object PreprocessPDF extends App with LazyLogging {
 	val allPapers = new PDFLoader(new File(INPUT_DIR)).getPapers()
 	allPapers.par.foreach(paper => {
 		val searcher = new StatTermSearcher(paper, StatTermloader.terms)
-		val terms = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
-		val permutations = new StatTermPermuter(terms).permutations
+		val statTermsInPaper = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
+		val combinationsOfMethodsAndAssumptions = new StatTermPermuter(statTermsInPaper).permutations
 
-		permutations.zipWithIndex.foreach(p => {
+		combinationsOfMethodsAndAssumptions.zipWithIndex.foreach(p => {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
 		})
 
