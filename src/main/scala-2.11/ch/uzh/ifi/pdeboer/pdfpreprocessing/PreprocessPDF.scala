@@ -3,6 +3,7 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing
 import java.io.File
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.{PDFHighlighter, PDFLoader}
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.png.PDFToPNGConverter
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats._
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
 import com.typesafe.config.ConfigFactory
@@ -31,6 +32,8 @@ object PreprocessPDF extends App with LazyLogging {
 
 		combinationsOfMethodsAndAssumptions.zipWithIndex.foreach(p => {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
+			val fullPNG = new PDFToPNGConverter(highlightedPDF, p._1, CONVERT_CMD).convert()
+
 		})
 
 		logger.info(s"finished processing paper $paper")

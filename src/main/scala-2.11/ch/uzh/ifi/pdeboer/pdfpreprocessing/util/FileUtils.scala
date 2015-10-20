@@ -31,4 +31,13 @@ object FileUtils extends LazyLogger {
 			}
 		}
 	}
+
+	def filenameWithoutExtension(file: File) = {
+		val filename: String = file.getName
+		val lastDotIndex = filename.lastIndexOf(".")
+
+		if (filename.length - lastDotIndex > 4)
+			filename // doesnt have an extension
+		else filename.substring(0, lastDotIndex)
+	}
 }
