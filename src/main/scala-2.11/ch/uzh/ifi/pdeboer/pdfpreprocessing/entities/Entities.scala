@@ -8,7 +8,7 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.UniqueSearchStringIdentifier
 /**
  * Created by pdeboer on 16/10/15.
  */
-case class Journal(name: String, basePath: File, year: Int = 2014)
+case class Journal(name: String = "journal", basePath: File, year: Int = 2014)
 
 case class Paper(name: String, file: File, journal: Journal) {
 	lazy val contents = new PDFTextExtractor(file.getAbsolutePath).pages

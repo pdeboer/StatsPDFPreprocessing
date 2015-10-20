@@ -18,8 +18,8 @@ object FileUtils extends LazyLogger {
 		true
 	}
 
-	def copyFileIntoDirectory(source: File, destination: String): File = {
-		val destinationFile = new File(destination + source.getName)
+	def copyFileIntoDirectory(source: File, destination: String, filenamePrefix: String = ""): File = {
+		val destinationFile = new File(destination + filenamePrefix + source.getName)
 
 		try {
 			org.codehaus.plexus.util.FileUtils.copyFile(source, destinationFile)

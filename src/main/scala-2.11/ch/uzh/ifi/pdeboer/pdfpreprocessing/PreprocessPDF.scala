@@ -3,7 +3,7 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing
 import java.io.File
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.{PDFHighlighter, PDFLoader}
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.{StatTermSearcher, StatTermloader}
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats._
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
@@ -26,7 +26,13 @@ object PreprocessPDF extends App with LazyLogging {
 	val allPapers = new PDFLoader(new File(INPUT_DIR)).getPapers()
 	allPapers.par.foreach(paper => {
 		val searcher = new StatTermSearcher(paper, StatTermloader.terms)
-		val highlighter = new PDFHighlighter(searcher.occurrences, OUTPUT_DIR).copyAndHighlight()
+		val terms = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
+		val permutations = new StatTermPermuter(terms).permutations
+
+		permutations.zipWithIndex.foreach(p => {
+			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
+
+		})
 	})
 
 }
