@@ -1,7 +1,6 @@
 package ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf
 
-import java.io.{ByteArrayOutputStream, FileInputStream, File}
-import java.util.regex.Pattern
+import java.io._
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.PDFPermutation
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
@@ -32,8 +31,8 @@ class PDFHighlighter(permutation: PDFPermutation, outputBaseFolder: String = "ou
 
 			permutation.highlights.foreach(i =>
 				pdfHighlight.highlight(
-					Pattern.quote(i.occurrence.uniqueSearchStringInPaper).r.pattern,
-					i.occurrence.matchedExpression.r.pattern, i.color, i.occurrence.page))
+					i.occurrence.uniqueSearchStringInPaper.r.pattern,
+					i.occurrence.escapedMatchText.r.pattern, i.color, i.occurrence.page))
 
 			val byteArrayOutputStream = new ByteArrayOutputStream()
 
@@ -44,6 +43,11 @@ class PDFHighlighter(permutation: PDFPermutation, outputBaseFolder: String = "ou
 			if (parser.getDocument != null) {
 				parser.getDocument.close()
 			}
+
+			Some(new BufferedOutputStream(new FileOutputStream(pdfToHighlight))).foreach(o => {
+				o.write(byteArrayOutputStream.toByteArray)
+				o.close()
+			})
 			logger.info(s"highlighted $permutation")
 			true
 		}

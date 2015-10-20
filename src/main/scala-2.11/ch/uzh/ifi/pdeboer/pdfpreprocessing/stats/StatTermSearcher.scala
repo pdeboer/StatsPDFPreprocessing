@@ -6,6 +6,9 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{StatisticalMethod, Paper, S
  * Created by pdeboer on 16/10/15.
  */
 class StatTermSearcher(paper: Paper, terms: List[StatisticalMethod]) {
+
+	import StatTermSearcher._
+
 	lazy val occurrences = {
 		val withDuplicates = findOccurrences
 		removeDuplicates(withDuplicates)
@@ -38,18 +41,22 @@ class StatTermSearcher(paper: Paper, terms: List[StatisticalMethod]) {
 	def buildRegexForString(searchString: String): List[String] = {
 		val searchStringInclSuffixes = if (searchString.length < 7) addLikelySuffixesAndPostfixesToMethods(searchString) else List(searchString)
 
-		val charsToEscape = "-()[].!{}:*"
-		def quoteAndAllowSpaces(str: String) = str.map(c => (if (charsToEscape.contains(c)) s"\\$c" else c) + "[\\s\\-]*").mkString("")
-
 		if (searchString.length < 7)
 			searchStringInclSuffixes.map(search => {
-				"(\\b" + quoteAndAllowSpaces(search) + "\\b)"
+				"(\\b" + addRegexToAllowSpaces(search) + "\\b)"
 			})
 		else
-			List("(?i)(" + quoteAndAllowSpaces(searchString) + ")")
+			List("(?i)(" + addRegexToAllowSpaces(searchString) + ")")
 	}
 
 	private def addLikelySuffixesAndPostfixesToMethods(t: String): List[String] = {
 		List(t, t + "s")
 	}
+}
+
+object StatTermSearcher {
+	val charsToEscape = "-()[].!{}:*"
+
+	def addRegexToAllowSpaces(str: String) =
+		str.replaceAll("\\s", "").map(c => (if (charsToEscape.contains(c)) s"\\$c" else c) + "[\\s\\-]*").mkString("")
 }

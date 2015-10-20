@@ -1,7 +1,5 @@
 package ch.uzh.ifi.pdeboer.pdfpreprocessing.stats
 
-import java.util.regex.Pattern
-
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.StatTermOccurrence
 
 /**
@@ -11,8 +9,8 @@ class UniqueSearchStringIdentifier(term: StatTermOccurrence) {
 	val relevantPage = term.paper.contents(term.page)
 
 	def checkUniqueness(startIndex: Int, endIndex: Int): String = {
-		val targetString: String = relevantPage.substring(startIndex, endIndex)
-		val resultCount: Int = Pattern.quote(targetString).r.findAllIn(relevantPage).length
+		val targetString: String = StatTermSearcher.addRegexToAllowSpaces(relevantPage.substring(startIndex, endIndex))
+		val resultCount: Int = targetString.r.findAllIn(relevantPage).length
 		assert(resultCount > 0)
 
 		if (resultCount == 1) {

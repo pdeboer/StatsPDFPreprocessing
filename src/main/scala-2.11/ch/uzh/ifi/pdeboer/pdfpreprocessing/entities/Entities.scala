@@ -3,7 +3,7 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing.entities
 import java.io.File
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFTextExtractor
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.UniqueSearchStringIdentifier
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.{StatTermSearcher, UniqueSearchStringIdentifier}
 
 /**
  * Created by pdeboer on 16/10/15.
@@ -17,6 +17,8 @@ case class Paper(name: String, file: File, journal: Journal) {
 
 case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, paper: Paper, startIndex: Int, endIndex: Int, page: Int) {
 	def actualText = paper.contents(page).substring(startIndex, endIndex)
+
+	def escapedMatchText = StatTermSearcher.addRegexToAllowSpaces(actualText)
 
 	lazy val uniqueSearchStringInPaper = new UniqueSearchStringIdentifier(this).findUniqueTerm()
 }

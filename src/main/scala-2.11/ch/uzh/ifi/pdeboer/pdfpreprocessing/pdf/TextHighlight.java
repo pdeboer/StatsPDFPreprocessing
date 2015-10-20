@@ -157,13 +157,6 @@ public class TextHighlight extends PDFTextStripper {
 							found = true;
 						}
 					}
-					/* dont get this. why do we need it?
-				} else if (markingPattern.toString().contains("\\b")) {
-					for (Match markingMatch : textCache.match(searchMatch.positions, PatternHelper.formatPatternWithWordBoundary(markingPattern))) {
-						if (markupMatch(color, contentStream, markingMatch)) {
-							found = true;
-						}
-					}*/
 				} else {
 					System.out.println("Cannot highlight: " + markingPattern.pattern() + " on page " + (pageNr - 1));
 				}
@@ -187,8 +180,9 @@ public class TextHighlight extends PDFTextStripper {
 		if (textBoundingBoxes.size() > 0) {
 			contentStream.appendRawCommands("/highlights gs\n");
 			contentStream.setNonStrokingColor(color);
-			for (int i = 0; i < textBoundingBoxes.size(); i++) {
-				contentStream.fillRect(textBoundingBoxes.get(i).getLowerLeftX(), textBoundingBoxes.get(i).getLowerLeftY(), Math.max(Math.abs(textBoundingBoxes.get(i).getUpperRightX() - textBoundingBoxes.get(i).getLowerLeftX()), 10), 10);
+			for (PDRectangle textBoundingBox : textBoundingBoxes) {
+				contentStream.fillRect(textBoundingBox.getLowerLeftX(), textBoundingBox.getLowerLeftY(),
+						Math.max(Math.abs(textBoundingBox.getUpperRightX() - textBoundingBox.getLowerLeftX()), 10), 10);
 			}
 			return true;
 		}
