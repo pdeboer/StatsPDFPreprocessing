@@ -19,7 +19,7 @@ object StatTermloader {
 		methodToDelta
 	}
 
-	lazy val terms = {
+	lazy val terms: List[StatisticalMethod] = {
 
 		val assumptionsInCSV = Source.fromFile("assumptions.csv", "UTF-8").getLines().map(l => {
 			val cols = l.split(",").map(_.trim)
@@ -46,20 +46,6 @@ object StatTermloader {
 
 		methods
 	}.toList
-
-	def methods = terms.map(_.methodName).toList
-
-	def termSynonyms = terms.flatMap(t => t.synonyms).toList
-
-	def termAssumptions = terms.flatMap(t => t.assumptions.map(a => a.assumptionName)).toList
-
-	def termAssumptionSynonyms = terms.flatMap(t => t.assumptions.flatMap(a => a.synonyms)).toList
-
-	def methodsAndSynonyms = methods ::: termSynonyms
-
-	def assumptionsAndSynonyms = termAssumptions ::: termAssumptionSynonyms
-
-	def allTerms = methods ::: termSynonyms ::: termAssumptions ::: termAssumptionSynonyms
 
 	def getDeltaForMethod(method: String): Int = {
 		try {

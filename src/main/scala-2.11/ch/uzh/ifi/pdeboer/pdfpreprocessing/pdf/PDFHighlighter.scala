@@ -33,7 +33,7 @@ class PDFHighlighter(permutation: PDFPermutation, outputBaseFolder: String = "ou
 			permutation.highlights.foreach(i =>
 				pdfHighlight.highlight(
 					Pattern.quote(i.occurrence.uniqueSearchStringInPaper).r.pattern,
-					Pattern.quote(i.occurrence.matchedExpression).r.pattern, i.color, i.occurrence.page))
+					i.occurrence.matchedExpression.r.pattern, i.color, i.occurrence.page))
 
 			val byteArrayOutputStream = new ByteArrayOutputStream()
 

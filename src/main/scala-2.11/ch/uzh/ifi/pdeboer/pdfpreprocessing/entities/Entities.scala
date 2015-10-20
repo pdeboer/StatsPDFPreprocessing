@@ -23,10 +23,10 @@ case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, 
 
 case class UniqueSearchTerm(term: String, statTerm: String)
 
-sealed class StatisticalTerm(name: String, synonyms: List[String]) {
+sealed class StatisticalTerm(val name: String, val synonyms: List[String]) {
 	def searchTerm = name.toLowerCase
 }
 
-case class StatisticalMethod(methodName: String, synonyms: List[String], var assumptions: List[StatisticalAssumption]) extends StatisticalTerm(methodName, synonyms)
+case class StatisticalMethod(methodName: String, _synonyms: List[String], assumptions: List[StatisticalAssumption]) extends StatisticalTerm(methodName, _synonyms)
 
-case class StatisticalAssumption(assumptionName: String, synonyms: List[String]) extends StatisticalTerm(assumptionName, synonyms)
+case class StatisticalAssumption(assumptionName: String, _synonyms: List[String]) extends StatisticalTerm(assumptionName, _synonyms)

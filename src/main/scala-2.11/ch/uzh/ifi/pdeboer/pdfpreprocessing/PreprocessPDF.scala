@@ -31,8 +31,9 @@ object PreprocessPDF extends App with LazyLogging {
 
 		permutations.zipWithIndex.foreach(p => {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
-
 		})
+
+		logger.info(s"finished processing paper $paper")
 	})
 
 }
