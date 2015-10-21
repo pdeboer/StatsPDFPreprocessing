@@ -15,6 +15,8 @@ import org.codehaus.plexus.util.FileUtils
  * With some modifications by pdeboer
  */
 class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCropping: Boolean = true) extends LazyLogger {
+	assert(pngImage != null)
+
 	//tolerated color range of highlighted Methods (yellow) and assumptions (green)
 	val YELLOW_RANGES = List[(Int, Int)]((190, 255), (190, 255), (100, 160))
 	val GREEN_RANGES = List[(Int, Int)]((100, 160), (190, 255), (100, 160))
