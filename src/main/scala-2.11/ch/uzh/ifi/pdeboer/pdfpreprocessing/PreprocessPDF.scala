@@ -2,8 +2,9 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing
 
 import java.io.File
 
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.csv.{CSVExporter, Snippet}
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.{PDFHighlighter, PDFLoader}
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.png.PDFToPNGConverter
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.png.{PNGProcessor, PDFToPNGConverter}
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats._
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
 import com.typesafe.config.ConfigFactory
@@ -25,18 +26,23 @@ object PreprocessPDF extends App with LazyLogging {
 	FileUtils.emptyDir(new File(OUTPUT_DIR))
 
 	val allPapers = new PDFLoader(new File(INPUT_DIR)).getPapers()
-	allPapers.par.foreach(paper => {
+	val snippets = allPapers.par.flatMap(paper => {
 		val searcher = new StatTermSearcher(paper, StatTermloader.terms)
 		val statTermsInPaper = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
 		val combinationsOfMethodsAndAssumptions = new StatTermPermuter(statTermsInPaper).permutations
 
-		combinationsOfMethodsAndAssumptions.zipWithIndex.foreach(p => {
+		val snippets = combinationsOfMethodsAndAssumptions.zipWithIndex.map(p => {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
 			val fullPNG = new PDFToPNGConverter(highlightedPDF, p._1, CONVERT_CMD).convert()
 
+			val statTermLocationsInSnippet = new PNGProcessor(fullPNG, p._1, paper.journal.singleColumnPapers).process()
+			Snippet(fullPNG, p._1, statTermLocationsInSnippet)
 		})
 
 		logger.info(s"finished processing paper $paper")
-	})
+		snippets
+	}).toList
+
+	new CSVExporter(PERMUTATIONS_CSV_FILENAME, snippets).persist()
 
 }

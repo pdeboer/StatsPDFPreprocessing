@@ -35,7 +35,7 @@ object StatTermloader {
 		Source.fromFile("met2ass.csv", "UTF-8").getLines().foreach(l => {
 			val cols = l.split(",").map(_.trim)
 
-			val assumption = assumptionsInCSV.find(_.assumptionName == cols(1)).getOrElse(throw new Exception(cols(1)))
+			val assumption = assumptionsInCSV.find(_.name == cols(1)).getOrElse(throw new Exception(cols(1)))
 			methodMap += cols(0) -> (assumption :: methodMap.getOrElse(cols(0), Nil))
 		})
 
@@ -57,7 +57,7 @@ object StatTermloader {
 	}
 
 	def getMethodAndSynonymsFromMethodName(method: String): Option[StatisticalMethod] = {
-		terms.find(m => m.methodName.equalsIgnoreCase(method))
+		terms.find(m => m.name.equalsIgnoreCase(method))
 	}
 
 }

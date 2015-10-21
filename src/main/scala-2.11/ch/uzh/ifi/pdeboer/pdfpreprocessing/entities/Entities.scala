@@ -8,7 +8,7 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.{StatTermSearcher, UniqueSearch
 /**
  * Created by pdeboer on 16/10/15.
  */
-case class Journal(name: String = "journal", basePath: File, year: Int = 2014)
+case class Journal(name: String = "journal", basePath: File, year: Int = 2014, singleColumnPapers: Boolean = false)
 
 case class Paper(name: String, file: File, journal: Journal) {
 	lazy val contents = new PDFTextExtractor(file.getAbsolutePath).pages
@@ -23,12 +23,20 @@ case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, 
 	lazy val uniqueSearchStringInPaper = new UniqueSearchStringIdentifier(this).findUniqueTerm()
 }
 
-case class UniqueSearchTerm(term: String, statTerm: String)
+sealed trait StatisticalTerm {
+	def name: String
 
-sealed class StatisticalTerm(val name: String, val synonyms: List[String]) {
+	def synonyms: List[String]
+
 	def searchTerm = name.toLowerCase
+
+	def isStatisticalMethod: Boolean
 }
 
-case class StatisticalMethod(methodName: String, _synonyms: List[String], assumptions: List[StatisticalAssumption]) extends StatisticalTerm(methodName, _synonyms)
+case class StatisticalMethod(name: String, synonyms: List[String], assumptions: List[StatisticalAssumption]) extends StatisticalTerm {
+	override def isStatisticalMethod = true
+}
 
-case class StatisticalAssumption(assumptionName: String, _synonyms: List[String]) extends StatisticalTerm(assumptionName, _synonyms)
+case class StatisticalAssumption(name: String, synonyms: List[String]) extends StatisticalTerm {
+	override def isStatisticalMethod = false
+}

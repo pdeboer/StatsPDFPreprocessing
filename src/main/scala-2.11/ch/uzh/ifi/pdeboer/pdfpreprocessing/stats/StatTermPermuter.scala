@@ -2,7 +2,7 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing.stats
 
 import java.awt.Color
 
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{Paper, StatisticalAssumption, StatisticalMethod, StatTermOccurrence}
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities._
 import ch.uzh.ifi.pdeboer.pplib.util.LazyLogger
 
 /**
@@ -35,7 +35,19 @@ class StatTermPermuter(occurrences: Iterable[StatTermOccurrence]) extends LazyLo
 	}
 }
 
-case class PDFPermutation(paper: Paper, highlights: List[PDFHighlightTerm])
+case class PDFPermutation(paper: Paper, highlights: List[PDFHighlightTerm]) {
+	def method = getTermByType(getMethods = true).asInstanceOf[StatisticalMethod]
+
+	def assumption = getTermByType(getMethods = false).asInstanceOf[StatisticalAssumption]
+
+	def getOccurrencesByType(getMethods: Boolean = true) = {
+		highlights.filter(_.occurrence.term.isStatisticalMethod == getMethods).map(_.occurrence)
+	}
+
+	private def getTermByType(getMethods: Boolean = true) = {
+		getOccurrencesByType(getMethods).head.term
+	}
+}
 
 case class PDFHighlightTerm(color: Color, occurrence: StatTermOccurrence)
 
