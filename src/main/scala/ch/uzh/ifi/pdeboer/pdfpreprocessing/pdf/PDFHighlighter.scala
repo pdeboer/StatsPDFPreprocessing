@@ -12,12 +12,14 @@ import org.apache.pdfbox.pdmodel.PDDocument
  * Created by pdeboer on 16/10/15.
  */
 class PDFHighlighter(permutation: PDFPermutation, outputBaseFolder: String = "output/", filenamePrefix: String = "") extends LazyLogger {
-	private def targetFolder = {
+	def targetFolder = {
 		val basefolderWithTrailingSlash = if (outputBaseFolder.endsWith("/")) outputBaseFolder else outputBaseFolder + "/"
-		val fullname = basefolderWithTrailingSlash + permutation.paper.journal.name + "/" + permutation.paper.name + "/"
+		val fullname = basefolderWithTrailingSlash + permutation.paper.journal.name + "/" + filenamePrefix + targetFilename + "/"
 		new File(fullname).mkdirs()
 		fullname
 	}
+
+	def targetFilename = permutation.paper.name.replaceAll("[\\(\\) \\[\\]]", "")
 
 	def highlight(pdfToHighlight: File): Boolean = {
 		try {
@@ -60,7 +62,7 @@ class PDFHighlighter(permutation: PDFPermutation, outputBaseFolder: String = "ou
 	}
 
 	def copyAndHighlight(): File = {
-		val pdfToHighlight = FileUtils.copyFileIntoDirectory(permutation.paper.file, targetFolder, filenamePrefix)
+		val pdfToHighlight = FileUtils.copyFileIntoDirectory(permutation.paper.file, targetFolder, Some(targetFilename + ".pdf"))
 
 		highlight(pdfToHighlight)
 		pdfToHighlight
