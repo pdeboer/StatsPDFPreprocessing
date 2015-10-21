@@ -8,7 +8,12 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.{StatTermSearcher, UniqueSearch
 /**
  * Created by pdeboer on 16/10/15.
  */
-case class Journal(name: String = "journal", basePath: File, year: Int = 2014, singleColumnPapers: Boolean = false)
+case class Journal(name: String = "journal", basePath: File, year: Int = 2014) {
+	def singleColumnPapers: Boolean = {
+		name.endsWith("_1col")
+	}
+}
+
 
 case class Paper(name: String, file: File, journal: Journal) {
 	lazy val contents = new PDFTextExtractor(file.getAbsolutePath).pages

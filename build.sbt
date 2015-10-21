@@ -14,11 +14,11 @@ libraryDependencies ++= Seq(
 "pdeboer" %% "pplib" % "0.1-SNAPSHOT"
 )
 
-assemblyJarName in assembly := "papersampler.jar"
+assemblyJarName in assembly := "preprocessor.jar"
 
 test in assembly := {}
 
-mainClass in assembly := Some("paperSampler.PaperSampler")
+mainClass in assembly := Some("ch.uzh.ifi.pdeboer.pdfpreprocessing.PreprocessPDF")
 
 assemblyMergeStrategy in assembly := {
 	case "log4j.properties" => MergeStrategy.concat
