@@ -55,13 +55,10 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 	}
 
 	def cropPNG() {
-		logger.debug(s"Creating snippet of $pngImage")
 		extractAndGenerateImage()
 	}
 
 	def coordinatesOfHighlights: (List[Point2D], List[Point2D]) = {
-		logger.debug(s"extracting color coords from $pngImage")
-
 		val width = inputImage.get.getWidth
 
 		var yellowCoords = List.empty[Point2D]

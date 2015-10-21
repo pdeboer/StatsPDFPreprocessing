@@ -18,6 +18,8 @@ case class Journal(name: String = "journal", basePath: File, year: Int = 2014) {
 case class Paper(name: String, file: File, journal: Journal) {
 	lazy val contents = new PDFTextExtractor(file.getAbsolutePath).pages
 	lazy val lowerCaseContents = contents.map(_.toLowerCase)
+
+	override def toString = s"Paper: $name"
 }
 
 case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, paper: Paper, startIndex: Int, endIndex: Int, page: Int) {
@@ -40,8 +42,13 @@ sealed trait StatisticalTerm {
 
 case class StatisticalMethod(name: String, synonyms: List[String], assumptions: List[StatisticalAssumption]) extends StatisticalTerm {
 	override def isStatisticalMethod = true
+
+	override def toString = "Method: " + name
+
 }
 
 case class StatisticalAssumption(name: String, synonyms: List[String]) extends StatisticalTerm {
 	override def isStatisticalMethod = false
+
+	override def toString = s"Assumption: " + name
 }

@@ -17,7 +17,7 @@ class PDFToPNGConverter(pdfFile: File, perm: PDFPermutation, conversionCommand: 
 			logger.error(s"couldn't convert file using $conversionCommandWithParameters")
 			null
 		} else {
-			logger.debug(s"File: ${pdfFile.getName} successfully converted to PNG")
+			logger.debug(s"Permutation successfully converted to PNG: " + perm)
 			new File(destinationPath)
 		}
 	}

@@ -47,6 +47,8 @@ case class PDFPermutation(paper: Paper, highlights: List[PDFHighlightTerm]) {
 	private def getTermByType(getMethods: Boolean = true) = {
 		getOccurrencesByType(getMethods).head.term
 	}
+
+	override def toString: String = s"Permutation($paper, $method, $assumption)"
 }
 
 case class PDFHighlightTerm(color: Color, occurrence: StatTermOccurrence)
