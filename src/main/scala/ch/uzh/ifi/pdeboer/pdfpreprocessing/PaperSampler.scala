@@ -12,7 +12,7 @@ import com.typesafe.scalalogging.LazyLogging
  * Created by pdeboer on 30/10/15.
  */
 object PaperSampler extends App with LazyLogging {
-	logger.debug("starting sampling")
+	logger.info("starting sampling")
 
 	val conf = ConfigFactory.load()
 	val INPUT_DIR = conf.getString("highlighter.pdfSourceDir")
@@ -24,8 +24,8 @@ object PaperSampler extends App with LazyLogging {
 
 	val targetDistribution = new MethodDistribution(
 		new PaperSelection(allPaperMethodMaps).methodOccurrenceMap.map(e => e._1 -> (e._2 * PERCENTAGE).toInt))
-	logger.debug("complete distribution is " + new PaperSelection(allPaperMethodMaps))
-	logger.debug(s"target distribution is $targetDistribution")
+	logger.info("complete distribution is " + new PaperSelection(allPaperMethodMaps))
+	logger.info(s"target distribution is $targetDistribution")
 
 	class PaperSelectionFound(val paperSelection: PaperSelection) extends Exception
 
