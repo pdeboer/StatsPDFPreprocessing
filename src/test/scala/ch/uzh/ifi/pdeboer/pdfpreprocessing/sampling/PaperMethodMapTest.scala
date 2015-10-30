@@ -1,7 +1,6 @@
-package ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf
+package ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.StatisticalMethod
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling.MethodDistribution
 import org.junit.{Assert, Test}
 
 /**
