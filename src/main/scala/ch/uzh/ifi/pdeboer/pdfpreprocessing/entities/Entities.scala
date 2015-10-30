@@ -27,7 +27,15 @@ case class StatTermOccurrence(term: StatisticalTerm, matchedExpression: String, 
 
 	def escapedMatchText = StatTermSearcher.addRegexToAllowSpaces(actualText)
 
+	def inclPageOffset(index: Int) = paper.contents.take(Math.max(0, page - 1)).map(_.length).sum + index
+
 	lazy val uniqueSearchStringInPaper = new UniqueSearchStringIdentifier(this).findUniqueTerm()
+}
+
+case class StatTermOccurrenceGroup(term: StatisticalTerm, occurrences: List[StatTermOccurrence]) {
+	lazy val minIndex = occurrences.map(o => o.inclPageOffset(o.startIndex)).min
+
+	lazy val maxIndex = occurrences.map(o => o.inclPageOffset(o.endIndex)).max
 }
 
 sealed trait StatisticalTerm {
@@ -40,7 +48,7 @@ sealed trait StatisticalTerm {
 	def isStatisticalMethod: Boolean
 }
 
-case class StatisticalMethod(name: String, synonyms: List[String], assumptions: List[StatisticalAssumption]) extends StatisticalTerm {
+case class StatisticalMethod(name: String, synonyms: List[String], assumptions: List[StatisticalAssumption], delta: Int = 0) extends StatisticalTerm {
 	override def isStatisticalMethod = true
 
 	override def toString = "Method: " + name

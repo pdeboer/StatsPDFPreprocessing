@@ -2,6 +2,8 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing.stats
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{StatisticalMethod, Paper, StatTermOccurrence, StatisticalTerm}
 
+import scala.collection.immutable.Iterable
+
 /**
  * Created by pdeboer on 16/10/15.
  */
@@ -9,7 +11,7 @@ class StatTermSearcher(paper: Paper, includeAssumptions: Boolean = true, terms: 
 
 	import StatTermSearcher._
 
-	lazy val occurrences = {
+	lazy val occurrences: Iterable[StatTermOccurrence] = {
 		val withDuplicates = findOccurrences
 		removeDuplicates(withDuplicates)
 	}

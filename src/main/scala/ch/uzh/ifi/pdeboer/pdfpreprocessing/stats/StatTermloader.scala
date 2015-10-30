@@ -9,15 +9,11 @@ import scala.io.Source
  * Created by pdeboer on 16/06/15.
  */
 object StatTermloader {
-	lazy val deltas = {
+	lazy val deltas: Map[String, Int] = Source.fromFile("deltas.csv", "UTF-8").getLines().map(l => {
+		val cols = l.split(",")
+		(cols(0), cols(1).toInt)
+	}).toMap
 
-		val methodToDelta = Source.fromFile("deltas.csv", "UTF-8").getLines().map(l => {
-			val cols = l.split(",")
-			(cols(0), cols(1).toInt)
-		}).toList
-
-		methodToDelta
-	}
 
 	lazy val terms: List[StatisticalMethod] = {
 
@@ -39,20 +35,13 @@ object StatTermloader {
 
 		val methods = methodMap.map { case (method, assumptions) =>
 			val methodAndSynonym = methodNamesAndSynonyms.find(_._1 == method).get
-			StatisticalMethod(methodAndSynonym._1, methodAndSynonym._2, assumptions)
+			val methodKey: String = methodAndSynonym._1
+			StatisticalMethod(methodKey, methodAndSynonym._2, assumptions, deltas.getOrElse(methodKey, 0))
 		}
 
 		methods
 	}.toList
 
-	def getDeltaForMethod(method: String): Int = {
-		try {
-			val value = deltas.find(_._1.equalsIgnoreCase(method)).getOrElse((method, 0))
-			value._2
-		} catch {
-			case e: Exception => 0
-		}
-	}
 
 	def getMethodAndSynonymsFromMethodName(method: String): Option[StatisticalMethod] = {
 		terms.find(m => m.name.equalsIgnoreCase(method))
