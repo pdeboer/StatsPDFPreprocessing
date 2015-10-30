@@ -23,7 +23,8 @@ assemblyJarName in assembly := "preprocessor.jar"
 
 test in assembly := {}
 
-mainClass in assembly := Some("ch.uzh.ifi.pdeboer.pdfpreprocessing.PreprocessPDF")
+//mainClass in assembly := Some("ch.uzh.ifi.pdeboer.pdfpreprocessing.PreprocessPDF")
+mainClass in assembly := Some("ch.uzh.ifi.pdeboer.pdfpreprocessing.PaperSampler")
 
 assemblyMergeStrategy in assembly := {
 	case "log4j.properties" => MergeStrategy.concat
