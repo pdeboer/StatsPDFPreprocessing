@@ -8,19 +8,19 @@ import com.github.tototoshi.csv.CSVWriter
 /**
  * Created by pdeboer on 30/10/15.
  */
-class PaperSelection(val papers: Set[PaperMethodMap]) extends MethodDistribution(Map.empty) {
+class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistribution(Map.empty) {
 	override lazy val methodOccurrenceMap: Map[StatisticalMethod, Int] = papers.foldLeft(Map.empty[StatisticalMethod, Int])((l, r) => {
 		val allMethodKeys = (l.keys.toList ::: r.methodOccurrenceMap.keys.toList).toSet
 		allMethodKeys.map(key => key -> (l.getOrElse(key, 0) + r.methodOccurrenceMap.getOrElse(key, 0))).toMap
 	})
 
-	def addPaper(p: PaperMethodMap) = new PaperSelection(papers + p)
+	def addPaper(p: PaperMethodMap) = new PaperSelection(p :: papers)
 
 	def persist(filename: String): Unit = {
 		val w = CSVWriter.open(new File(filename))
 		val keysList = methodOccurrenceMap.keys.toList
 		w.writeRow("paper" :: keysList.map(_.name))
-		papers.foreach(p => w.writeRow(p :: keysList.map(k => p.methodOccurrenceMap.getOrElse(k, 0))))
+		papers.foreach(p => w.writeRow(p.paper.name :: keysList.map(k => p.methodOccurrenceMap.getOrElse(k, 0))))
 		w.close()
 	}
 }
@@ -37,6 +37,8 @@ object PaperMethodMap {
 
 class MethodDistribution(_methodOccurrenceMap: Map[StatisticalMethod, Int]) {
 	def methodOccurrenceMap: Map[StatisticalMethod, Int] = _methodOccurrenceMap
+
+	override def toString = methodOccurrenceMap.toString
 
 	def canEqual(other: Any): Boolean = other.isInstanceOf[MethodDistribution]
 
