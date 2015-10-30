@@ -19,8 +19,8 @@ object PaperSampler extends App with LazyLogging {
 	val PERCENTAGE = conf.getDouble("sampler.targetPercentage")
 
 	val allPapers = new PDFLoader(new File(INPUT_DIR)).getPapers()
-	val allPaperMethodMaps = allPapers.map(p => PaperMethodMap.fromOccurrenceList(
-		new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)).toList
+	val allPaperMethodMaps = allPapers.map(p => new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)
+		.filter(_.nonEmpty).map(p => PaperMethodMap.fromOccurrenceList(p)).toList
 
 	val targetDistribution = new MethodDistribution(
 		new PaperSelection(allPaperMethodMaps).methodOccurrenceMap.map(e => e._1 -> (e._2 * PERCENTAGE).toInt))
