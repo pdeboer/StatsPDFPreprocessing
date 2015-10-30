@@ -21,15 +21,13 @@ object StatTermloader {
 
 	lazy val terms: List[StatisticalMethod] = {
 
-		val assumptionsInCSV = Source.fromFile("assumptions.csv", "UTF-8").getLines().map(l => {
-			val cols = l.split(",").map(_.trim)
-			StatisticalAssumption(cols(0), cols.drop(1).toList)
-		}).toList
-
-		val methodNamesAndSynonyms = Source.fromFile("methods.csv", "UTF-8").getLines().map(l => {
+		def getTermCSV(filename: String) = Source.fromFile(filename, "UTF-8").getLines().map(l => {
 			val cols = l.split(",").map(_.trim)
 			(cols(0), cols.drop(1).toList)
 		}).toList
+
+		val assumptionsInCSV = getTermCSV("assumptions.csv").map(a => StatisticalAssumption(a._1, a._2))
+		val methodNamesAndSynonyms = getTermCSV("methods.csv")
 
 		var methodMap = new mutable.HashMap[String, List[StatisticalAssumption]]()
 		Source.fromFile("met2ass.csv", "UTF-8").getLines().foreach(l => {

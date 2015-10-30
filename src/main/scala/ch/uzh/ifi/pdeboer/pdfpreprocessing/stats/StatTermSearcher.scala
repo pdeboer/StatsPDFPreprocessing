@@ -5,7 +5,7 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{StatisticalMethod, Paper, S
 /**
  * Created by pdeboer on 16/10/15.
  */
-class StatTermSearcher(paper: Paper, terms: List[StatisticalMethod]) {
+class StatTermSearcher(paper: Paper, includeAssumptions: Boolean = true, terms: List[StatisticalMethod] = StatTermloader.terms) {
 
 	import StatTermSearcher._
 
@@ -16,7 +16,7 @@ class StatTermSearcher(paper: Paper, terms: List[StatisticalMethod]) {
 
 	protected def findOccurrences = {
 		terms.flatMap(method => {
-			searchForTerm(method) ::: method.assumptions.flatMap(searchForTerm)
+			searchForTerm(method) ::: (if (includeAssumptions) method.assumptions.flatMap(searchForTerm) else Nil)
 		})
 	}
 
