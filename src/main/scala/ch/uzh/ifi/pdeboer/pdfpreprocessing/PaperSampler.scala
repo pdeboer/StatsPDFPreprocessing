@@ -1,6 +1,7 @@
 package ch.uzh.ifi.pdeboer.pdfpreprocessing
 
 import java.io.File
+import java.util.concurrent.atomic.{AtomicLong, AtomicInteger}
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFLoader
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling.{MethodDistribution, PaperMethodMap, PaperSelection}
@@ -29,19 +30,40 @@ object PaperSampler extends App with LazyLogging {
 
 	class PaperSelectionFound(val paperSelection: PaperSelection) extends Exception
 
+	val t = new Thread {
+		val counter = new AtomicInteger(0)
+		val discovered = new AtomicLong(0)
+		val processed = new AtomicLong(0)
+
+		this.setDaemon(true)
+
+		override def run(): Unit = {
+			while (true) {
+				Thread.sleep(1000)
+				println(s"tried $counter variations. Discovered $discovered, processed $processed")
+				counter.set(0)
+			}
+		}
+	}
+
 	def tryAddingPaperToSelection(currentSelection: PaperSelection, holdOut: List[PaperMethodMap]): Option[PaperSelection] = {
+		t.counter.incrementAndGet()
+		t.processed.addAndGet(1)
+
 		if (currentSelection.hasMoreOccurrencesForAtLeastOneMethod(targetDistribution)) None
 		else if (currentSelection == targetDistribution) throw new PaperSelectionFound(currentSelection)
 		else {
 			holdOut.par.map(m => {
 				val newSelection = currentSelection.addPaper(m)
 				val holdOutWithoutNewPaper = holdOut.filterNot(p => p.paper == m.paper)
+				t.discovered.addAndGet(holdOutWithoutNewPaper.size)
 				tryAddingPaperToSelection(newSelection, holdOutWithoutNewPaper)
 			}).find(_.isDefined).getOrElse(None)
 		}
 	}
 
 	try {
+		t.start()
 		tryAddingPaperToSelection(new PaperSelection(Nil), allPaperMethodMaps)
 		logger.info("haven't found anything :(")
 	}
