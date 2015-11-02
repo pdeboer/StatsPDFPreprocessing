@@ -11,7 +11,7 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
 class PDFLoader(path: File) {
 	def papers = {
 		path.listFiles().flatMap(journalDir => {
-			val resultForJournalFolder = Option(journalDir.listFiles().toList).getOrElse(Nil).map(paperFile => {
+			val resultForJournalFolder = Option(journalDir.listFiles()).getOrElse(Array.empty[File]).map(paperFile => {
 				extractPaper(journalFromFolder(journalDir), paperFile)
 			}).filter(_.isDefined)
 
