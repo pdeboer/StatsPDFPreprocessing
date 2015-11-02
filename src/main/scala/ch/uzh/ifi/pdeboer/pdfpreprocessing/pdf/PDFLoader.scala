@@ -9,14 +9,23 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
  * Created by pdeboer on 16/10/15.
  */
 class PDFLoader(path: File) {
-	def getPapers() = {
+	def papers = {
 		path.listFiles().flatMap(journalDir => {
-			val journal = Journal(journalDir.getName, journalDir)
-			journalDir.listFiles().map(paperFile => {
-				if (paperFile.getName.endsWith(".pdf"))
-					Some(Paper(FileUtils.filenameWithoutExtension(paperFile), paperFile, journal))
-				else None
+			val resultForJournalFolder = journalDir.listFiles().map(paperFile => {
+				extractPaper(journalFromFolder(journalDir), paperFile)
 			}).filter(_.isDefined)
+			if (resultForJournalFolder.length > 0) resultForJournalFolder else List(extractPaper(journalFromFolder(path), journalDir))
 		}).map(_.get)
+	}
+
+	private def journalFromFolder(journalDir: File): Journal = {
+		val journal = Journal(journalDir.getName, journalDir)
+		journal
+	}
+
+	private def extractPaper(journal: Journal, paperFile: File): Option[Paper] = {
+		if (paperFile.getName.endsWith(".pdf"))
+			Some(Paper(FileUtils.filenameWithoutExtension(paperFile), paperFile, journal))
+		else None
 	}
 }
