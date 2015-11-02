@@ -25,7 +25,7 @@ object PreprocessPDF extends App with LazyLogging {
 
 	FileUtils.emptyDir(new File(OUTPUT_DIR))
 
-	val allPapers = new PDFLoader(new File(INPUT_DIR)).papers()
+	val allPapers = new PDFLoader(new File(INPUT_DIR)).papers
 	val snippets = allPapers.par.flatMap(paper => {
 		val searcher = new StatTermSearcher(paper)
 		val statTermsInPaper = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
