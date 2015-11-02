@@ -16,7 +16,7 @@ class PDFLoader(path: File) {
 			}).filter(_.isDefined)
 
 			if (resultForJournalFolder.nonEmpty) resultForJournalFolder else List(extractPaper(journalFromFolder(path), journalDir))
-		}).map(_.get)
+		}).filter(_.isDefined).map(_.get)
 	}
 
 	private def journalFromFolder(journalDir: File): Journal = {
