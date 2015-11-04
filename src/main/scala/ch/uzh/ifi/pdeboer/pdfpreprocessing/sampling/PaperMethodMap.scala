@@ -14,7 +14,7 @@ class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistributio
 		allMethodKeys.map(key => key -> (l.getOrElse(key, 0) + r.methodOccurrenceMap.getOrElse(key, 0))).toMap
 	})
 
-	def addPaper(p: PaperMethodMap) = new PaperSelection(p :: papers)
+	def newSelectionWithPaper(p: PaperMethodMap) = new PaperSelection(p :: papers)
 
 	def persist(filename: String): Unit = {
 		val w = CSVWriter.open(new File(filename))
@@ -22,6 +22,38 @@ class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistributio
 		w.writeRow("paper" :: keysList.map(_.name))
 		papers.foreach(p => w.writeRow(p.paper.name :: keysList.map(k => p.methodOccurrenceMap.getOrElse(k, 0))))
 		w.close()
+	}
+
+	def distanceTo(target: Map[StatisticalMethod, Int]): Int = {
+		try {
+			val keys = target.keys.toList ::: methodOccurrenceMap.keys.toList
+			val sum = keys.foldLeft(0)((cur, key) => {
+				val delta = target.getOrElse(key, 0) - methodOccurrenceMap.getOrElse(key, 0)
+				cur + Math.abs(delta)
+			})
+			sum
+		}
+		catch {
+			case e: Throwable => e.printStackTrace(); 0
+		}
+	}
+
+	def vectorLength = distanceTo(Map.empty)
+
+
+	override def canEqual(other: Any): Boolean = other.isInstanceOf[PaperSelection]
+
+	override def equals(other: Any): Boolean = other match {
+		case that: PaperSelection =>
+			super.equals(that) &&
+				(that canEqual this) &&
+				papers == that.papers
+		case _ => false
+	}
+
+	override def hashCode(): Int = {
+		val state = Seq(super.hashCode(), papers)
+		state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
 	}
 }
 

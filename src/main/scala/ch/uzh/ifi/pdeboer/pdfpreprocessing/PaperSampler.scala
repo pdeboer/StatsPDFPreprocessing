@@ -1,13 +1,15 @@
 package ch.uzh.ifi.pdeboer.pdfpreprocessing
 
 import java.io.File
-import java.util.concurrent.atomic.{AtomicLong, AtomicInteger}
+import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFLoader
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling.{MethodDistribution, PaperMethodMap, PaperSelection}
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.StatTermSearcher
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
+
+import scala.collection.mutable
 
 /**
  * Created by pdeboer on 30/10/15.
@@ -20,7 +22,7 @@ object PaperSampler extends App with LazyLogging {
 	val PERCENTAGE = conf.getDouble("sampler.targetPercentage")
 
 	val allPapers = new PDFLoader(new File(INPUT_DIR)).papers
-	val allPaperMethodMaps = allPapers.map(p => new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)
+	val allPaperMethodMaps: List[PaperMethodMap] = allPapers.map(p => new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)
 		.filter(_.nonEmpty).map(p => PaperMethodMap.fromOccurrenceList(p)).toList
 
 	val targetDistribution = new MethodDistribution(
@@ -28,7 +30,22 @@ object PaperSampler extends App with LazyLogging {
 	logger.info("complete distribution is " + new PaperSelection(allPaperMethodMaps))
 	logger.info(s"target distribution is $targetDistribution")
 
-	class PaperSelectionFound(val paperSelection: PaperSelection) extends Exception
+	case class OrderablePaperSelection(paperSelection: PaperSelection) extends Comparable[OrderablePaperSelection] {
+		lazy val f = paperSelection.distanceTo(targetDistribution.methodOccurrenceMap)
+		lazy val g = paperSelection.vectorLength
+
+		override def compareTo(o: OrderablePaperSelection): Int = {
+			-1 * f.compareTo(o.f)
+		}
+
+		def unexploredSelections = allPaperMethodMaps.filterNot(m => paperSelection.papers.contains(m))
+			.map(p => paperSelection.newSelectionWithPaper(p))
+	}
+
+	var closedSet = List.empty[PaperSelection]
+	val openSet = new mutable.PriorityQueue[OrderablePaperSelection]()
+	openSet += new OrderablePaperSelection(new PaperSelection(Nil))
+	var best = new OrderablePaperSelection(new PaperSelection(Nil))
 
 	val t = new Thread {
 		val counter = new AtomicInteger(0)
@@ -46,31 +63,38 @@ object PaperSampler extends App with LazyLogging {
 		}
 	}
 
-	def tryAddingPaperToSelection(currentSelection: PaperSelection, holdOut: List[PaperMethodMap]): Option[PaperSelection] = {
+	t.start()
+
+	while (openSet.nonEmpty) {
+		val current = openSet.dequeue()
+		t.processed.incrementAndGet()
 		t.counter.incrementAndGet()
-		t.processed.addAndGet(1)
-
-		if (currentSelection.hasMoreOccurrencesForAtLeastOneMethod(targetDistribution)) None
-		else if (currentSelection == targetDistribution) throw new PaperSelectionFound(currentSelection)
-		else {
-			holdOut.par.map(m => {
-				val newSelection = currentSelection.addPaper(m)
-				val holdOutWithoutNewPaper = holdOut.filterNot(p => p.paper == m.paper)
-				t.discovered.addAndGet(holdOutWithoutNewPaper.size)
-				tryAddingPaperToSelection(newSelection, holdOutWithoutNewPaper)
-			}).find(_.isDefined).getOrElse(None)
-		}
-	}
-
-	try {
-		t.start()
-		tryAddingPaperToSelection(new PaperSelection(Nil), allPaperMethodMaps)
-		logger.info("haven't found anything :(")
-	}
-	catch {
-		case p: PaperSelectionFound => {
-			logger.info(s"Found possible configuration: ${p.paperSelection.papers.map(_.paper).mkString(",")}")
-			p.paperSelection.persist("sample.csv")
+		if (current.f == 0) {
+			//found goal
+			println("found working selection!")
+			current.paperSelection.persist("target.csv")
+			System.exit(0)
+		} else {
+			closedSet = current.paperSelection :: closedSet
+			current.unexploredSelections.par.foreach(s => {
+				if (!closedSet.contains(s)) {
+					val ops = OrderablePaperSelection(s)
+					openSet.synchronized {
+						if (!openSet.toList.contains(ops)) {
+							openSet.enqueue(ops)
+							if (ops.f < best.f) {
+								PaperSampler.synchronized {
+									best = ops;
+								}
+								println(s"found selection with lower distance: ${best.f}: $best")
+								best.paperSelection.persist("tempselection.csv")
+							}
+							t.discovered.incrementAndGet()
+						}
+					}
+				}
+			})
 		}
 	}
 }
+
