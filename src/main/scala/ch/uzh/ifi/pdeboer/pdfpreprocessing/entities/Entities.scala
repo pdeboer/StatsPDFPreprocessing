@@ -8,15 +8,15 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.{StatTermSearcher, UniqueSearch
 /**
  * Created by pdeboer on 16/10/15.
  */
-case class Journal(name: String = "journal", basePath: File, year: Int = 2014) {
+case class Journal(name: String = "journal", basePath: File, year: Int = 2014) extends Serializable {
 	def singleColumnPapers: Boolean = {
 		name.endsWith("_1col")
 	}
 }
 
 
-case class Paper(name: String, file: File, journal: Journal) {
-	lazy val contents = new PDFTextExtractor(file.getAbsolutePath).pages
+case class Paper(name: String, file: File, journal: Journal) extends Serializable {
+	val contents = new PDFTextExtractor(file.getAbsolutePath).pages
 	lazy val lowerCaseContents = contents.map(_.toLowerCase)
 
 	override def toString = s"Paper: $name"
