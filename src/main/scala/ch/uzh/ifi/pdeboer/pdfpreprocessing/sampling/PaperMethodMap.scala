@@ -58,7 +58,6 @@ class PaperSelection(val papers: Set[PaperMethodMap]) extends MethodDistribution
 }
 
 class PaperMethodMap(val paper: Paper, methodOccurrenceMap: Map[StatisticalMethod, Int]) extends MethodDistribution(methodOccurrenceMap) {
-
 	override def canEqual(other: Any): Boolean = other.isInstanceOf[PaperMethodMap]
 
 	override def equals(other: Any): Boolean = other match {
@@ -83,7 +82,7 @@ object PaperMethodMap {
 	}
 }
 
-class MethodDistribution(_methodOccurrenceMap: Map[StatisticalMethod, Int]) {
+class MethodDistribution(_methodOccurrenceMap: Map[StatisticalMethod, Int]) extends Serializable {
 	def methodOccurrenceMap: Map[StatisticalMethod, Int] = _methodOccurrenceMap
 
 	override def toString = methodOccurrenceMap.toString

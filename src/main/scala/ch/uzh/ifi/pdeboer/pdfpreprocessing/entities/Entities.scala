@@ -38,7 +38,7 @@ case class StatTermOccurrenceGroup(term: StatisticalTerm, occurrences: List[Stat
 	lazy val maxIndex = occurrences.map(o => o.inclPageOffset(o.endIndex)).max
 }
 
-sealed trait StatisticalTerm {
+sealed trait StatisticalTerm extends Serializable {
 	def name: String
 
 	def synonyms: List[String]
