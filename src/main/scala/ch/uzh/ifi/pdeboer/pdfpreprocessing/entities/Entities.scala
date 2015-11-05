@@ -52,7 +52,6 @@ case class StatisticalMethod(name: String, synonyms: List[String], assumptions: 
 	override def isStatisticalMethod = true
 
 	override def toString = "Method: " + name
-
 }
 
 case class StatisticalAssumption(name: String, synonyms: List[String]) extends StatisticalTerm {

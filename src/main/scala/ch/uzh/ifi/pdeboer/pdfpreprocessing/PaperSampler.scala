@@ -40,7 +40,7 @@ object PaperSampler extends App with LazyLogging {
 		lazy val g = paperSelection.vectorLength
 
 		override def compareTo(o: OrderablePaperSelection): Int = {
-			-1 * f.compareTo(o.f)
+			f.compareTo(o.f)
 		}
 
 		def unexploredSelections = allPaperMethodMaps.filterNot(m => paperSelection.papers.contains(m))
@@ -83,7 +83,7 @@ object PaperSampler extends App with LazyLogging {
 		} else {
 			closedSet = current.paperSelection :: closedSet
 			current.unexploredSelections.par.foreach(s => {
-				if (!closedSet.contains(s)) {
+				if (!s.exceedsMaxForAMethod(targetDistribution.methodOccurrenceMap) && !closedSet.contains(s)) {
 					val ops = OrderablePaperSelection(s)
 					openSet.synchronized {
 						if (!openSet.toList.contains(ops)) {

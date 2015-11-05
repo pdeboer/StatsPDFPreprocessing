@@ -24,9 +24,9 @@ class PDFTextExtractor(pdfPath: String) extends LazyLogging {
 			pdDoc.close()
 			txt
 		} catch {
-			case e1: Error => {
+			case e1: Throwable => {
 				logger.error("An error occurred while extracting text from pdf ", e1)
-				throw e1
+				Nil
 			}
 		}
 	}

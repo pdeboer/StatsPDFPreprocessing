@@ -6,11 +6,11 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.{StatTermOccurrence, Paper, 
 import com.github.tototoshi.csv.CSVWriter
 
 /**
- * Created by pdeboer on 30/10/15.
- */
+  * Created by pdeboer on 30/10/15.
+  */
 class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistribution(Map.empty) {
 	override lazy val methodOccurrenceMap: Map[StatisticalMethod, Int] = papers.foldLeft(Map.empty[StatisticalMethod, Int])((l, r) => {
-		val allMethodKeys = (l.keys.toList ::: r.methodOccurrenceMap.keys.toList).toSet
+		val allMethodKeys = l.keys.toSet ++ r.methodOccurrenceMap.keys.toSet
 		allMethodKeys.map(key => key -> (l.getOrElse(key, 0) + r.methodOccurrenceMap.getOrElse(key, 0))).toMap
 	})
 
@@ -26,10 +26,10 @@ class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistributio
 
 	def distanceTo(target: Map[StatisticalMethod, Int]): Int = {
 		try {
-			val keys = target.keys.toList ::: methodOccurrenceMap.keys.toList
+			val keys = target.keys.toSet ++ methodOccurrenceMap.keys.toSet
 			val sum = keys.foldLeft(0)((cur, key) => {
 				val delta = target.getOrElse(key, 0) - methodOccurrenceMap.getOrElse(key, 0)
-				cur + Math.abs(delta)
+				cur + (if (delta < 0) target.values.sum else delta)
 			})
 			sum
 		}
@@ -37,6 +37,8 @@ class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistributio
 			case e: Throwable => e.printStackTrace(); 0
 		}
 	}
+
+	def exceedsMaxForAMethod(target: Map[StatisticalMethod, Int]) = distanceTo(target) > target.values.sum
 
 	def vectorLength = distanceTo(Map.empty)
 
