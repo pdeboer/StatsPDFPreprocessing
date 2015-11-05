@@ -8,7 +8,7 @@ import com.github.tototoshi.csv.CSVWriter
 /**
  * Created by pdeboer on 30/10/15.
  */
-class PaperSelection(val papers: Set[PaperMethodMap]) extends MethodDistribution(Map.empty) {
+class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistribution(Map.empty) {
 	override lazy val methodOccurrenceMap: Map[StatisticalMethod, Int] = papers.foldLeft(Map.empty[StatisticalMethod, Int])((l, r) => {
 		val allMethodKeys = (l.keys.toList ::: r.methodOccurrenceMap.keys.toList).toSet
 		allMethodKeys.map(key => key -> (l.getOrElse(key, 0) + r.methodOccurrenceMap.getOrElse(key, 0))).toMap

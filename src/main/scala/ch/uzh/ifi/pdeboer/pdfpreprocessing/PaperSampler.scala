@@ -24,8 +24,8 @@ object PaperSampler extends App with LazyLogging {
 	val PERCENTAGE = conf.getDouble("sampler.targetPercentage")
 
 	val allPapers = mem.mem("papers")(new PDFLoader(new File(INPUT_DIR)).papers)
-	val allPaperMethodMaps: Set[PaperMethodMap] = allPapers.map(p => new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)
-		.filter(_.nonEmpty).map(p => PaperMethodMap.fromOccurrenceList(p)).toSet
+	val allPaperMethodMaps = allPapers.map(p => new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)
+		.filter(_.nonEmpty).map(p => PaperMethodMap.fromOccurrenceList(p)).toList
 
 	val targetDistribution = new MethodDistribution(
 		new PaperSelection(allPaperMethodMaps).methodOccurrenceMap.map(e => e._1 -> (e._2 * PERCENTAGE).toInt))
@@ -40,14 +40,15 @@ object PaperSampler extends App with LazyLogging {
 			-1 * f.compareTo(o.f)
 		}
 
-		def unexploredSelections = allPaperMethodMaps.diff(paperSelection.papers)
+		def unexploredSelections = allPaperMethodMaps.filterNot(m => paperSelection.papers.contains(m))
+
 			.map(p => paperSelection.newSelectionWithPaper(p))
 	}
 
 	var closedSet = List.empty[PaperSelection]
 	val openSet = new mutable.PriorityQueue[OrderablePaperSelection]()
-	openSet += new OrderablePaperSelection(new PaperSelection(Set.empty[PaperMethodMap]))
-	var best = new OrderablePaperSelection(new PaperSelection(Set.empty[PaperMethodMap]))
+	openSet += new OrderablePaperSelection(new PaperSelection(Nil))
+	var best = new OrderablePaperSelection(new PaperSelection(Nil))
 
 	val t = new Thread {
 		val counter = new AtomicInteger(0)
