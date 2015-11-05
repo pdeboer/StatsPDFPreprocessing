@@ -51,13 +51,14 @@ object PaperSampler extends App with LazyLogging {
 		val counter = new AtomicInteger(0)
 		val discovered = new AtomicLong(0)
 		val processed = new AtomicLong(0)
+		var closestDistance = new AtomicInteger(Integer.MAX_VALUE)
 
 		this.setDaemon(true)
 
 		override def run(): Unit = {
 			while (true) {
 				Thread.sleep(1000)
-				println(s"tried $counter variations. Discovered $discovered, processed $processed")
+				println(s"tried $counter variations. Discovered $discovered, processed $processed. closest distance $closestDistance")
 				counter.set(0)
 			}
 		}
@@ -85,6 +86,7 @@ object PaperSampler extends App with LazyLogging {
 								PaperSampler.synchronized {
 									best = ops
 								}
+								t.closestDistance.set(best.f)
 								println(s"found selection with lower distance: ${best.f}: $best")
 								best.paperSelection.persist("tempselection.csv")
 							}

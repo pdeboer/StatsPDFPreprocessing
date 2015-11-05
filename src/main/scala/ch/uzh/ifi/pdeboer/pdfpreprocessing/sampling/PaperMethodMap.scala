@@ -14,7 +14,7 @@ class PaperSelection(val papers: Set[PaperMethodMap]) extends MethodDistribution
 		allMethodKeys.map(key => key -> (l.getOrElse(key, 0) + r.methodOccurrenceMap.getOrElse(key, 0))).toMap
 	})
 
-	def newSelectionWithPaper(p: PaperMethodMap) = new PaperSelection(p :: papers)
+	def newSelectionWithPaper(p: PaperMethodMap) = new PaperSelection(papers + p)
 
 	def persist(filename: String): Unit = {
 		val w = CSVWriter.open(new File(filename))

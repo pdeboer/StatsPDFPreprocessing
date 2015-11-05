@@ -19,6 +19,7 @@ project/target
 project
 
 # Scala-IDE specific
+/src/main/resources/application.conf
 .scala_dependencies
 .worksheet
 
