@@ -8,7 +8,7 @@ import com.github.tototoshi.csv.CSVWriter
 /**
  * Created by pdeboer on 30/10/15.
  */
-class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistribution(Map.empty) {
+class PaperSelection(val papers: Set[PaperMethodMap]) extends MethodDistribution(Map.empty) {
 	override lazy val methodOccurrenceMap: Map[StatisticalMethod, Int] = papers.foldLeft(Map.empty[StatisticalMethod, Int])((l, r) => {
 		val allMethodKeys = (l.keys.toList ::: r.methodOccurrenceMap.keys.toList).toSet
 		allMethodKeys.map(key => key -> (l.getOrElse(key, 0) + r.methodOccurrenceMap.getOrElse(key, 0))).toMap
@@ -57,7 +57,23 @@ class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistributio
 	}
 }
 
-class PaperMethodMap(val paper: Paper, methodOccurrenceMap: Map[StatisticalMethod, Int]) extends MethodDistribution(methodOccurrenceMap) {}
+class PaperMethodMap(val paper: Paper, methodOccurrenceMap: Map[StatisticalMethod, Int]) extends MethodDistribution(methodOccurrenceMap) {
+
+	override def canEqual(other: Any): Boolean = other.isInstanceOf[PaperMethodMap]
+
+	override def equals(other: Any): Boolean = other match {
+		case that: PaperMethodMap =>
+			super.equals(that) &&
+				(that canEqual this) &&
+				paper == that.paper
+		case _ => false
+	}
+
+	override def hashCode(): Int = {
+		val state = Seq(super.hashCode(), paper)
+		state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+	}
+}
 
 object PaperMethodMap {
 	def fromOccurrenceList(occurrences: List[StatTermOccurrence]) = {
