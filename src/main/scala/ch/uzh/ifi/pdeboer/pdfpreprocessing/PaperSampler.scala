@@ -80,7 +80,7 @@ object PaperSampler extends App with LazyLogging {
 				if (!closedSet.contains(s)) {
 					val ops = OrderablePaperSelection(s)
 					openSet.synchronized {
-						if (!openSet.toSet.contains(ops)) {
+						if (!openSet.toList.contains(ops)) {
 							openSet.enqueue(ops)
 							if (ops.f < best.f) {
 								PaperSampler.synchronized {
