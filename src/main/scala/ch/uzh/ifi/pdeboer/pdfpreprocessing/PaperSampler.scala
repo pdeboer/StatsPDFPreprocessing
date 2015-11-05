@@ -4,15 +4,15 @@ import java.io.File
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.Paper
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFLoader
-import ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling.{MethodDistribution, PaperMethodMap, PaperSelection}
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling.{RandomSampler, MethodDistribution, PaperMethodMap, PaperSelection}
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.StatTermSearcher
 import ch.uzh.ifi.pdeboer.pplib.process.entities.FileProcessMemoizer
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 
 /**
- * Created by pdeboer on 30/10/15.
- */
+  * Created by pdeboer on 30/10/15.
+  */
 object PaperSampler extends App with LazyLogging {
 	logger.info("starting sampling")
 	val mem = new FileProcessMemoizer("everything")
@@ -32,6 +32,10 @@ object PaperSampler extends App with LazyLogging {
 	logger.info("complete distribution is " + new PaperSelection(allPaperMethodMaps))
 	logger.info(s"target distribution is $targetDistribution")
 
-
+	(1 to Runtime.getRuntime.availableProcessors()).par.exists(i => {
+		new RandomSampler(targetDistribution, allPaperMethodMaps).run();
+		true
+	})
+	logger.info("found solution. completed")
 }
 

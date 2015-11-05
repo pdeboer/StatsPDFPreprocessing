@@ -24,21 +24,26 @@ class PaperSelection(val papers: List[PaperMethodMap]) extends MethodDistributio
 		w.close()
 	}
 
+	var distanceToCache: Option[(Map[StatisticalMethod, Int], Int)] = None
+
 	def distanceTo(target: Map[StatisticalMethod, Int]): Int = {
-		try {
+		if (distanceToCache.isDefined && distanceToCache.get._1 == target) {
+			distanceToCache.get._2
+		} else {
 			val keys = target.keys.toSet ++ methodOccurrenceMap.keys.toSet
 			val sum = keys.foldLeft(0)((cur, key) => {
 				val delta = target.getOrElse(key, 0) - methodOccurrenceMap.getOrElse(key, 0)
-				cur + (if (delta < 0) target.values.sum else delta)
+				cur + Math.abs(delta)
 			})
+			distanceToCache = Some(target, sum)
 			sum
-		}
-		catch {
-			case e: Throwable => e.printStackTrace(); 0
 		}
 	}
 
-	def exceedsMaxForAMethod(target: Map[StatisticalMethod, Int]) = distanceTo(target) > target.values.sum
+	def exceedsMaxForAMethod(target: Map[StatisticalMethod, Int]) = {
+		val keys = target.keys.toSet ++ methodOccurrenceMap.keys.toSet
+		keys.exists(key => target.getOrElse(key, 0) - methodOccurrenceMap.getOrElse(key, 0) < 0)
+	}
 
 	def vectorLength = distanceTo(Map.empty)
 
