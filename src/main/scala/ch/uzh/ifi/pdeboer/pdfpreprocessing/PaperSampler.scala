@@ -3,6 +3,7 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing
 import java.io.File
 import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.Paper
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFLoader
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.sampling.{MethodDistribution, PaperMethodMap, PaperSelection}
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.StatTermSearcher
@@ -23,7 +24,10 @@ object PaperSampler extends App with LazyLogging {
 	val INPUT_DIR = conf.getString("highlighter.pdfSourceDir")
 	val PERCENTAGE = conf.getDouble("sampler.targetPercentage")
 
-	val allPapers = mem.mem("papers")(new PDFLoader(new File(INPUT_DIR)).papers)
+	case class SerializedPaper(p: Array[Paper]) extends Serializable
+
+	val s = mem.mem("serializedPapers")(SerializedPaper(new PDFLoader(new File(INPUT_DIR)).papers))
+	val allPapers: Array[Paper] = s.p
 	val allPaperMethodMaps = allPapers.map(p => new StatTermSearcher(p, includeAssumptions = false).occurrences.toList)
 		.filter(_.nonEmpty).map(p => PaperMethodMap.fromOccurrenceList(p)).toList
 
