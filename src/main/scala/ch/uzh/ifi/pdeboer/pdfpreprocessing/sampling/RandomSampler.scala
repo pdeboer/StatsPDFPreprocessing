@@ -8,7 +8,7 @@ import scala.util.Random
 /**
   * Created by pdeboer on 05/11/15.
   */
-class RandomSampler(val targetDistribution: MethodDistribution, val allPaperMethodMaps: List[PaperMethodMap]) extends LazyLogger {
+class RandomSampler(val targetDistribution: MethodDistribution, val allPaperMethodMaps: List[PaperMethodMap], val id: Int) extends LazyLogger {
 	val paperMethodMapsWithoutDiscreditedMethods = allPaperMethodMaps.filter(p => p.methodOccurrenceMap.keys.forall(k => targetDistribution.methodOccurrenceMap.contains(k)))
 
 
@@ -32,7 +32,8 @@ class RandomSampler(val targetDistribution: MethodDistribution, val allPaperMeth
 
 			if (currentSelection.distanceTo(targetDistribution.methodOccurrenceMap) < bestSelectionSoFar.distanceTo(targetDistribution.methodOccurrenceMap)) {
 				bestSelectionSoFar = currentSelection
-				logger.info(s"found better selection with distance Distance: ${bestSelectionSoFar.distanceTo(targetDistribution.methodOccurrenceMap)}: $bestSelectionSoFar")
+				logger.info(s"$id: found better selection with distance Distance: ${bestSelectionSoFar.distanceTo(targetDistribution.methodOccurrenceMap)}: $bestSelectionSoFar")
+				bestSelectionSoFar.persist(s"samplerBestSolution$id.csv")
 			}
 		}
 	}

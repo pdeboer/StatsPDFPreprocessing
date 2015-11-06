@@ -33,7 +33,7 @@ object PaperSampler extends App with LazyLogging {
 	logger.info(s"target distribution is $targetDistribution")
 
 	(1 to Runtime.getRuntime.availableProcessors()).par.exists(i => {
-		new RandomSampler(targetDistribution, allPaperMethodMaps).run();
+		new RandomSampler(targetDistribution, allPaperMethodMaps, i).run()
 		true
 	})
 	logger.info("found solution. completed")
