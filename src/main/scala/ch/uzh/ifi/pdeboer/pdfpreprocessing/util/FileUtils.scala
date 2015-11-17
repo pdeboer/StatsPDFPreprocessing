@@ -5,8 +5,8 @@ import java.io.File
 import ch.uzh.ifi.pdeboer.pplib.util.LazyLogger
 
 /**
- * Created by pdeboer on 16/10/15.
- */
+  * Created by pdeboer on 16/10/15.
+  */
 object FileUtils extends LazyLogger {
 	def emptyDir(dir: File): Boolean = {
 		dir.listFiles().par.foreach(file => {
@@ -18,8 +18,9 @@ object FileUtils extends LazyLogger {
 		true
 	}
 
-	def copyFileIntoDirectory(source: File, destination: String, filename: Option[String] = None): File = {
+	def copyFileIntoDirectory(source: File, destination: String, filename: Option[String] = None, createFolders: Boolean = true): File = {
 		val destinationFile = new File(destination + filename.getOrElse(source.getName))
+		if (createFolders) destinationFile.mkdirs()
 
 		try {
 			org.codehaus.plexus.util.FileUtils.copyFile(source, destinationFile)

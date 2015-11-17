@@ -7,13 +7,13 @@ import java.io.File
 import javax.imageio.ImageIO
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.PDFPermutation
+import ch.uzh.ifi.pdeboer.pdfpreprocessing.{PreprocessPDF, util}
 import ch.uzh.ifi.pdeboer.pplib.util.LazyLogger
-import org.codehaus.plexus.util.FileUtils
 
 /**
- * Created by Mattia
- * With some modifications by pdeboer
- */
+  * Created by Mattia
+  * With some modifications by pdeboer
+  */
 class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCropping: Boolean = true) extends LazyLogger {
 	assert(pngImage != null)
 
@@ -42,16 +42,24 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 		} else this
 
 		if (!enableCropping) {
-			assert(managerForTargetPNG.yellowCoords.nonEmpty && managerForTargetPNG.greenCoords.nonEmpty, s"no highlightings found in $pngImage")
+			if (managerForTargetPNG.yellowCoords.isEmpty || managerForTargetPNG.greenCoords.isEmpty) {
+				copyToCroppingErrorFolder()
+				None
+			} else {
+				val minGreen = managerForTargetPNG.greenCoords.map(_.getY).min / inputImageHeight
+				val closestYellow = managerForTargetPNG.yellowCoords.minBy(v => Math.abs((v.getY / inputImageHeight) - minGreen)).getY / inputImageHeight
 
-			val minGreen = managerForTargetPNG.greenCoords.map(_.getY).min / inputImageHeight
-			val closestYellow = managerForTargetPNG.yellowCoords.minBy(v => Math.abs((v.getY / inputImageHeight) - minGreen)).getY / inputImageHeight
+				val boundaryMin = Math.min(minGreen, closestYellow) * 100
+				val boundaryMax = Math.max(minGreen, closestYellow) * 100
 
-			val boundaryMin = Math.min(minGreen, closestYellow) * 100
-			val boundaryMax = Math.max(minGreen, closestYellow) * 100
+				Some(StatTermLocationsInPNG(managerForTargetPNG.isMethodOnTop, boundaryMin, boundaryMax))
+			}
+		} else Some(StatTermLocationsInPNG(managerForTargetPNG.isMethodOnTop))
+	}
 
-			StatTermLocationsInPNG(managerForTargetPNG.isMethodOnTop, boundaryMin, boundaryMax)
-		} else StatTermLocationsInPNG(managerForTargetPNG.isMethodOnTop)
+	private def copyToCroppingErrorFolder(): Unit = {
+		util.FileUtils.copyFileIntoDirectory(pngImage, PreprocessPDF.PNG_ERROR_OUTPUT_PATH)
+		logger.error(s"Couldn't find highlightings in $pngImage")
 	}
 
 	def cropPNG() {
@@ -95,6 +103,7 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 
 		} catch {
 			case e: Exception => {
+				copyToCroppingErrorFolder()
 				logger.debug("Cannot find highlight to establish if method or prerequisite is on top.")
 				true
 			}
@@ -110,23 +119,16 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 
 			logger.debug(s"Snippet successfully written: $pngImage")
 		} else {
-			logger.error(s"Cannot create snippet. No highlight found in file: ${pngImage.getName}")
-			new File("errors_cutting_snippets").mkdir()
-			val snippet = new File("errors_cutting_snippets/" + pngImage.getName)
-			try {
-				FileUtils.copyFile(pngImage, snippet)
-			} catch {
-				case e: Exception => logger.error(s"Cannot copy file $pngImage to ../errors_cutting_snippets/ directory!", e)
-			}
+			copyToCroppingErrorFolder()
 		}
 	}
 
 	def createImage(inputImage: BufferedImage, startY: Int, endY: Int): BufferedImage = {
 		val snippetHeight = endY - startY
-		val imageWidth = inputImage.getWidth
+		val snippetWidth = inputImage.getWidth
 
-		val snippetImage = new BufferedImage(imageWidth, snippetHeight, BufferedImage.TYPE_INT_RGB)
-		for (w <- 0 until imageWidth) {
+		val snippetImage = new BufferedImage(snippetWidth, snippetHeight, BufferedImage.TYPE_INT_RGB)
+		for (w <- 0 until snippetWidth) {
 			for (h <- 0 until snippetHeight) {
 				snippetImage.setRGB(w, h, new Color(inputImage.getRGB(w, startY + h)).getRGB)
 			}

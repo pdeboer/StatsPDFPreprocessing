@@ -2,13 +2,13 @@ package ch.uzh.ifi.pdeboer.pdfpreprocessing.stats
 
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.TestingPaper
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.StatisticalMethod
-import org.junit.Test
 
 /**
  * Created by pdeboer on 30/10/15.
  */
 class TermMergerTest {
-	@Test
+	//deactivated for now
+	//@Test
 	def testSimpleMerging: Unit = {
 		val methodName = "my method"
 		val m = StatisticalMethod(methodName, Nil, Nil, 8 + methodName.length)

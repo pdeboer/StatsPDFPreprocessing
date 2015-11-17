@@ -6,12 +6,16 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFTextExtractor
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats.{StatTermSearcher, UniqueSearchStringIdentifier}
 
 /**
- * Created by pdeboer on 16/10/15.
- */
+  * Created by pdeboer on 16/10/15.
+  */
 case class Journal(name: String = "journal", basePath: File, year: Int = 2014) extends Serializable {
-	def singleColumnPapers: Boolean = {
-		name.endsWith("_1col")
+	def numColumns: Int = numColumnsOption.getOrElse(2)
+
+	def numColumnsOption: Option[Int] = {
+		".*_([0-9])+col".r.findFirstMatchIn(name).map(_.group(1).toInt)
 	}
+
+	def nameWithoutCol = if (numColumnsOption.isDefined) name.substring(0, name.length - "_1col".length) else name
 }
 
 

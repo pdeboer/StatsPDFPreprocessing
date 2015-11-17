@@ -11,8 +11,8 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 
 /**
- * Created by pdeboer on 16/10/15.
- */
+  * Created by pdeboer on 16/10/15.
+  */
 object PreprocessPDF extends App with LazyLogging {
 	logger.debug("starting highlighting")
 
@@ -22,6 +22,7 @@ object PreprocessPDF extends App with LazyLogging {
 	val OUTPUT_DIR = conf.getString("highlighter.snippetDir")
 	val CONVERT_CMD = conf.getString("highlighter.convertCmd")
 	val PERMUTATIONS_CSV_FILENAME = conf.getString("highlighter.permutationFilename")
+	val PNG_ERROR_OUTPUT_PATH = conf.getString("highlighter.pngErrorPath")
 
 	FileUtils.emptyDir(new File(OUTPUT_DIR))
 
@@ -35,12 +36,12 @@ object PreprocessPDF extends App with LazyLogging {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
 			val fullPNG = new PDFToPNGConverter(highlightedPDF, p._1, CONVERT_CMD).convert()
 
-			val statTermLocationsInSnippet = new PNGProcessor(fullPNG, p._1, paper.journal.singleColumnPapers).process()
-			Snippet(fullPNG, p._1, statTermLocationsInSnippet)
+			val statTermLocationsInSnippet = new PNGProcessor(fullPNG, p._1, paper.journal.numColumns == 1).process()
+			statTermLocationsInSnippet.map(s => Snippet(fullPNG, p._1, s))
 		})
 
 		logger.info(s"finished processing paper $paper")
-		snippets
+		snippets.filter(_.isDefined).map(_.get)
 	}).toList
 
 	new CSVExporter(PERMUTATIONS_CSV_FILENAME, snippets).persist()
