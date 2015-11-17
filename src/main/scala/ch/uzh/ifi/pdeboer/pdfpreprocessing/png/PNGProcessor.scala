@@ -125,6 +125,7 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 
 	def createImage(inputImage: BufferedImage, startY: Int, endY: Int): BufferedImage = {
 		val snippetHeight = endY - startY
+
 		val snippetWidth = inputImage.getWidth
 
 		val snippetImage = new BufferedImage(snippetWidth, snippetHeight, BufferedImage.TYPE_INT_RGB)
