@@ -37,7 +37,7 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 
 	def process() = {
 		val managerForTargetPNG = if (enableCropping) {
-			cropPNG()
+			if (pdfPermutation.paper.journal.numColumns < 3) cropPNG()
 			new PNGProcessor(pngImage, pdfPermutation, enableCropping = false)
 		} else this
 
@@ -126,12 +126,21 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 	def createImage(inputImage: BufferedImage, startY: Int, endY: Int): BufferedImage = {
 		val snippetHeight = endY - startY
 
-		val snippetWidth = inputImage.getWidth
+		val bothHighlightsOnLeftSide = yellowCoords.map(_.getX).max < inputImage.getWidth / 2 && greenCoords.map(_.getX).max < inputImage.getWidth / 2
+		val bothHighlightsOnRightSide = yellowCoords.map(_.getX).min > inputImage.getWidth / 2 && greenCoords.map(_.getX).min > inputImage.getWidth / 2
+		val isTwoColumnPaper: Boolean = pdfPermutation.paper.journal.numColumns == 2
+		val isOnSamePage: Boolean = pdfPermutation.highlights.forall(_.occurrence.page == pdfPermutation.highlights.head.occurrence.page)
+		val offsetLeft = if (isOnSamePage && isTwoColumnPaper && (bothHighlightsOnLeftSide || bothHighlightsOnRightSide)) inputImage.getWidth / 2
+		else 0
+
+		val snippetWidth = inputImage.getWidth - offsetLeft
+
 
 		val snippetImage = new BufferedImage(snippetWidth, snippetHeight, BufferedImage.TYPE_INT_RGB)
-		for (w <- 0 until snippetWidth) {
-			for (h <- 0 until snippetHeight) {
-				snippetImage.setRGB(w, h, new Color(inputImage.getRGB(w, startY + h)).getRGB)
+		for (x <- 0 until snippetWidth) {
+			for (y <- 0 until snippetHeight) {
+				val targetXCoordinate: Int = if (bothHighlightsOnRightSide) x + offsetLeft else x
+				snippetImage.setRGB(x, y, new Color(inputImage.getRGB(targetXCoordinate, startY + y)).getRGB)
 			}
 		}
 		snippetImage

@@ -36,7 +36,7 @@ object PreprocessPDF extends App with LazyLogging {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
 			val fullPNG = new PDFToPNGConverter(highlightedPDF, p._1, CONVERT_CMD).convert()
 
-			val statTermLocationsInSnippet = new PNGProcessor(fullPNG, p._1, paper.journal.numColumns == 1).process()
+			val statTermLocationsInSnippet = new PNGProcessor(fullPNG, p._1, true).process()
 			statTermLocationsInSnippet.map(s => Snippet(fullPNG, p._1, s))
 		})
 
