@@ -14,7 +14,7 @@ import ch.uzh.ifi.pdeboer.pplib.util.LazyLogger
   * Created by Mattia
   * With some modifications by pdeboer
   */
-class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCropping: Boolean = true) extends LazyLogger {
+class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, val enableCropping: Boolean = true) extends LazyLogger {
 	assert(pngImage != null)
 
 	//tolerated color range of highlighted Methods (yellow) and assumptions (green)
@@ -41,7 +41,7 @@ class PNGProcessor(pngImage: File, pdfPermutation: PDFPermutation, enableCroppin
 			new PNGProcessor(pngImage, pdfPermutation, enableCropping = false)
 		} else this
 
-		if (!enableCropping) {
+		if (!managerForTargetPNG.enableCropping) {
 			if (managerForTargetPNG.yellowCoords.isEmpty || managerForTargetPNG.greenCoords.isEmpty) {
 				copyToCroppingErrorFolder()
 				None

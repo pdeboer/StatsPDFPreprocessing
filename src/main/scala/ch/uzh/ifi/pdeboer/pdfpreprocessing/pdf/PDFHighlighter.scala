@@ -14,12 +14,12 @@ import org.apache.pdfbox.pdmodel.PDDocument
 class PDFHighlighter(permutation: PDFPermutation, outputBaseFolder: String = "output/", filenamePrefix: String = "") extends LazyLogger {
 	def targetFolder = {
 		val basefolderWithTrailingSlash = if (outputBaseFolder.endsWith("/")) outputBaseFolder else outputBaseFolder + "/"
-		val fullname = basefolderWithTrailingSlash + permutation.paper.journal.name + "/" + filenamePrefix + targetFilename + "/"
+		val fullname = basefolderWithTrailingSlash + permutation.paper.journal.name + "/" + targetFilename + "/"
 		new File(fullname).mkdirs()
 		fullname
 	}
 
-	def targetFilename = permutation.paper.name.replaceAll("[\\(\\) \\[\\]]", "")
+	def targetFilename = filenamePrefix + permutation.paper.name.replaceAll("[\\(\\) \\[\\]]", "")
 
 	def highlight(pdfToHighlight: File): Boolean = {
 		try {
