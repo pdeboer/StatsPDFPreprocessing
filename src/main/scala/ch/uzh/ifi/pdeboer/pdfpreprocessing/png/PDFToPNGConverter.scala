@@ -31,6 +31,6 @@ class PDFToPNGConverter(pdfFile: File, perm: PDFPermutation, conversionCommand: 
 	private def pageRange: String = {
 		val pageIndices = perm.highlights.map(_.occurrence.page - 1)
 		val (minPage, maxPage) = (pageIndices.min, pageIndices.max)
-		if (minPage == maxPage) s"[$minPage]" else s"[$minPage-$maxPage]"
+		if (minPage == maxPage) s"[$minPage]" else s"[$minPage,$maxPage]"
 	}
 }

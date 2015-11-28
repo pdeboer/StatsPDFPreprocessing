@@ -13,7 +13,7 @@ class StatTermPermuter(occurrences: Iterable[StatTermOccurrence]) extends LazyLo
 
 	def missingAssumptions = _missingAssumptions
 
-	lazy val permutations: Iterable[PDFPermutation] = {
+	lazy val permutations: List[PDFPermutation] = {
 		val methods = occurrences.filter(_.term.isInstanceOf[StatisticalMethod])
 		val assumptionsMap: Map[StatisticalAssumption, Iterable[StatTermOccurrence]] = occurrences.filter(_.term.isInstanceOf[StatisticalAssumption])
 			.groupBy(_.term).map(a => a._1.asInstanceOf[StatisticalAssumption] -> a._2)
@@ -31,7 +31,7 @@ class StatTermPermuter(occurrences: Iterable[StatTermOccurrence]) extends LazyLo
 					))
 				})
 			})
-		})
+		}).toList
 	}
 }
 
@@ -42,6 +42,11 @@ case class PDFPermutation(paper: Paper, highlights: List[PDFHighlightTerm]) {
 
 	def getOccurrencesByType(getMethods: Boolean = true) = {
 		highlights.filter(_.occurrence.term.isStatisticalMethod == getMethods).map(_.occurrence)
+	}
+
+	def distanceBetweenMinMaxIndex = {
+		val indices = highlights.map(o => o.occurrence.inclPageOffset(o.occurrence.startIndex))
+		indices.max - indices.min
 	}
 
 	private def getTermByType(getMethods: Boolean = true) = {

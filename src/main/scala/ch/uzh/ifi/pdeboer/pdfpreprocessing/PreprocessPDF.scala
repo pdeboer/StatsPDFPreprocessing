@@ -32,7 +32,7 @@ object PreprocessPDF extends App with LazyLogging {
 		val statTermsInPaper = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
 		val combinationsOfMethodsAndAssumptions = new StatTermPermuter(statTermsInPaper).permutations
 
-		val snippets = combinationsOfMethodsAndAssumptions.zipWithIndex.par.map(p => {
+		val snippets = combinationsOfMethodsAndAssumptions.sortBy(_.distanceBetweenMinMaxIndex).zipWithIndex.par.map(p => {
 			val highlightedPDF = new PDFHighlighter(p._1, OUTPUT_DIR, p._2 + "_").copyAndHighlight()
 			val fullPNG = new PDFToPNGConverter(highlightedPDF, p._1, CONVERT_CMD).convert()
 
