@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
 	"com.novocode" % "junit-interface" % "0.8" % "test->default"
 )
 
-assemblyJarName in assembly := "preprocessor.jar"
+//assemblyJarName in assembly := "preprocessor.jar"
 
 test in assembly := {}
 
