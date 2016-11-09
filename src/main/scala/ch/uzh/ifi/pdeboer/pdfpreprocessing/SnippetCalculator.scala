@@ -12,7 +12,7 @@ import com.typesafe.scalalogging.LazyLogging
   * Created by pdeboer on 16/10/15.
   */
 object SnippetCalculator extends App with LazyLogging {
-  logger.debug("starting highlighting")
+  logger.debug("starting scan")
 
   val conf = ConfigFactory.load()
 
