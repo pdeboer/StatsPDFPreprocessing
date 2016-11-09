@@ -19,12 +19,15 @@ object SnippetCalculator extends App with LazyLogging {
   private val path: File = new File("/home/user/pdeboer/allPapers") //new File("/Users/pdeboer/ownCloud/Privat/schule/phd/projects/stats Mike/all papers")
 
   val allPapers = new PDFLoader(path).papers
+  println("all journals: " + allPapers.map(_.journal).toSet.mkString(", "))
+
   val snippets = allPapers.par.map(paper => {
     val searcher = new StatTermSearcher(paper)
     val statTermsInPaper = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
     val combinationsOfMethodsAndAssumptions = new StatTermPermuter(statTermsInPaper).permutations
     PaperSnippets(paper, combinationsOfMethodsAndAssumptions.size)
   })
+
 
   snippets.groupBy(_.paper.journal).foreach(j => {
     val snippetCount = j._2.map(_.snippets).sum
