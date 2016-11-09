@@ -16,7 +16,6 @@ src_managed/
 project/boot/
 project/plugins/project/
 project/target
-project
 
 # Scala-IDE specific
 /src/main/resources/application.conf

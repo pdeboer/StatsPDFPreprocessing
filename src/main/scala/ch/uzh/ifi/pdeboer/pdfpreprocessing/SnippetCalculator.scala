@@ -16,8 +16,8 @@ object SnippetCalculator extends App with LazyLogging {
 
   val conf = ConfigFactory.load()
 
-  private val path: File = new File("/home/user/pdeboer/allPapers")
-  //new File("/Users/pdeboer/ownCloud/Privat/schule/phd/projects/stats Mike/all papers txt")
+  private val path: File = new File("/home/user/pdeboer/allPapers") //new File("/Users/pdeboer/ownCloud/Privat/schule/phd/projects/stats Mike/all papers")
+
   val allPapers = new PDFLoader(path).papers
   val snippets = allPapers.par.map(paper => {
     val searcher = new StatTermSearcher(paper)

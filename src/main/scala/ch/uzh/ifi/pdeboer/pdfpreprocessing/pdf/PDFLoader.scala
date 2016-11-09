@@ -9,7 +9,7 @@ import ch.uzh.ifi.pdeboer.pdfpreprocessing.util.FileUtils
  * Created by pdeboer on 16/10/15.
  */
 class PDFLoader(path: File) {
-	def papers = {
+	def papers: Array[Paper] = {
 		path.listFiles().par.flatMap(journalDir => {
 			val resultForJournalFolder = Option(journalDir.listFiles()).getOrElse(Array.empty[File]).par.map(paperFile => {
 				extractPaper(journalFromFolder(journalDir), paperFile)
@@ -26,7 +26,7 @@ class PDFLoader(path: File) {
 
 	private def extractPaper(journal: Journal, paperFile: File): Option[Paper] = {
 		if (paperFile.getName.endsWith(".pdf"))
-			Some(Paper(FileUtils.filenameWithoutExtension(paperFile), paperFile, journal))
+			Some(new Paper(FileUtils.filenameWithoutExtension(paperFile), paperFile, journal))
 		else None
 	}
 }

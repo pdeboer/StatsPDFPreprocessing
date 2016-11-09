@@ -12,7 +12,7 @@ import org.junit.{Assert, Test}
 class PDFHighlighterTest {
 	@Test
 	def testTargetFolder: Unit = {
-		val perm = PDFPermutation(Paper("asdf(a[s]df)as df", new File(""), Journal(basePath = new File("."))), Nil)
+		val perm = PDFPermutation(new Paper("asdf(a[s]df)as df", new File(""), Journal(basePath = new File("."))), Nil)
 		val highlighter = new PDFHighlighter(perm)
 		Assert.assertEquals("asdfasdfasdf", highlighter.targetFilename)
 	}
