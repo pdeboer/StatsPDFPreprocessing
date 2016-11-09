@@ -1,24 +1,7 @@
 ANOVA,Independen
 ANOVA,Normal
 ANOVA,Homogeneity of variance
-Linear regression,Homogeneity of variance
-Linear regression,Normal
-Linear regression,multicollinearity
-Linear regression,linearity
-Linear regression,Independen
-Multiple regression,Homogeneity of variance
-Multiple regression,Normal
-Multiple regression,multicollinearity
-Multiple regression,linearity
 t test,Normal
 t test,Independen
 t test,Homogeneity of variance
 t test,linearity
-ANCOVA,Normal
-ANCOVA,Homogeneity of variance
-ANCOVA,Independen
-ANCOVA,linearity
-ANCOVA,homogeneity of regression slopes
-ANCOVA,Homoscedasticity
-MANOVA,linearity
-MANOVA,Normal
