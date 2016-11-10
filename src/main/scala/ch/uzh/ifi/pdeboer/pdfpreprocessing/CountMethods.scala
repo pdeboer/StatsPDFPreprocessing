@@ -28,7 +28,12 @@ object CountMethods extends App {
 
   def getTXTFiles(folder: File): List[File] = {
     val descendantFiles = folder.listFiles().filter(f => f.isDirectory).flatMap(f => getTXTFiles(f)).toList
-    val myPDFs = folder.listFiles().filter(f => f.getName.endsWith(".txt")).toList
+    val myPDFs = folder.listFiles().filter(f => {
+      val isTxtFile = f.getName.endsWith(".txt")
+      val limitBMCTo2014 = !f.getParentFile.getName.startsWith("bmc_") || f.getParentFile.getName.startsWith("bmc_") && f.getName.startsWith("2014_")
+      val limitCHITo2014 = !f.getParentFile.getName.startsWith("CHI-") || f.getParentFile.getName == "CHI-2014"
+      isTxtFile && limitBMCTo2014 && limitCHITo2014
+    }).toList
     myPDFs ::: descendantFiles
   }
 
