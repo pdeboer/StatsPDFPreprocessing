@@ -5,6 +5,7 @@ import java.io.File
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.entities.Paper
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.pdf.PDFLoader
 import ch.uzh.ifi.pdeboer.pdfpreprocessing.stats._
+import com.github.tototoshi.csv.CSVWriter
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 
@@ -24,16 +25,15 @@ object SnippetCalculator extends App with LazyLogging {
   val snippets = allPapers.par.map(paper => {
     val searcher = new StatTermSearcher(paper)
     val statTermsInPaper = new StatTermPruning(List(new PruneTermsWithinOtherTerms)).prune(searcher.occurrences)
-    val combinationsOfMethodsAndAssumptions = new StatTermPermuter(statTermsInPaper).permutations
-    PaperSnippets(paper, combinationsOfMethodsAndAssumptions.size)
-  })
+    val combinationsOfMethodsAndAssumptions: List[PDFPermutation] = new StatTermPermuter(statTermsInPaper).permutations
+    PaperSnippets(paper, combinationsOfMethodsAndAssumptions)
+  }).flatMap(ps => ps.snippets.map(sni => (ps.paper, sni.method, sni.assumption)))
 
 
-  snippets.groupBy(_.paper.journal).foreach(j => {
-    val snippetCount = j._2.map(_.snippets).sum
-    println(s"${j._1.name}  $snippetCount")
-  })
+  val wr = CSVWriter.open("all_snippets.txt")
+  wr.writeAll(snippets.map(sni => List(sni._1.file.getName, sni._1.journal.name, sni._2.name, sni._3.name)).toList)
+  wr.close()
 
-  case class PaperSnippets(paper: Paper, snippets: Int)
+  case class PaperSnippets(paper: Paper, snippets: List[PDFPermutation])
 
 }
