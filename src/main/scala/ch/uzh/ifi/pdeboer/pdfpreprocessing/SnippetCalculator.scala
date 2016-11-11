@@ -9,6 +9,8 @@ import com.github.tototoshi.csv.CSVWriter
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 
+import scala.collection.mutable
+
 /**
   * Created by pdeboer on 16/10/15.
   */
@@ -33,6 +35,9 @@ object SnippetCalculator extends App with LazyLogging {
   val wr = CSVWriter.open("all_snippets.csv")
   wr.writeRow(List("paper", "journal", "method", "assumption"))
   wr.writeAll(snippets.map(sni => List(sni._1.file.getName, sni._1.journal.name, sni._2.name, sni._3.name)).toList)
+  var papersWithoutSnippets = mutable.HashSet.empty[Paper] ++ allPapers.toSet
+  snippets.foreach(s => papersWithoutSnippets -= s._1)
+  wr.writeRow(papersWithoutSnippets.map(p => List(p.file.getName, p.journal.name)).toList)
   wr.close()
 
   case class PaperSnippets(paper: Paper, snippets: List[PDFPermutation])
