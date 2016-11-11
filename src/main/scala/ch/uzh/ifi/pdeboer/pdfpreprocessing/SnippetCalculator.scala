@@ -37,7 +37,8 @@ object SnippetCalculator extends App with LazyLogging {
   wr.writeAll(snippets.map(sni => List(sni._1.file.getName, sni._1.journal.name, sni._2.name, sni._3.name)).toList)
   var papersWithoutSnippets = mutable.HashSet.empty[Paper] ++ allPapers.toSet
   snippets.foreach(s => papersWithoutSnippets -= s._1)
-  wr.writeRow(papersWithoutSnippets.flatMap(p => List(p.file.getName, p.journal.name)).toList)
+  private val csvVersion: List[List[String]] = papersWithoutSnippets.toList.map(p => List(p.file.getName, p.journal.name))
+  wr.writeRow(csvVersion)
   wr.close()
 
   case class PaperSnippets(paper: Paper, snippets: List[PDFPermutation])
