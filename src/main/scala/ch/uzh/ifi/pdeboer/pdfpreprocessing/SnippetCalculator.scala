@@ -30,7 +30,8 @@ object SnippetCalculator extends App with LazyLogging {
   }).flatMap(ps => ps.snippets.map(sni => (ps.paper, sni.method, sni.assumption)))
 
 
-  val wr = CSVWriter.open("all_snippets.txt")
+  val wr = CSVWriter.open("all_snippets.csv")
+  wr.writeRow(List("paper", "journal", "method", "assumption"))
   wr.writeAll(snippets.map(sni => List(sni._1.file.getName, sni._1.journal.name, sni._2.name, sni._3.name)).toList)
   wr.close()
 
