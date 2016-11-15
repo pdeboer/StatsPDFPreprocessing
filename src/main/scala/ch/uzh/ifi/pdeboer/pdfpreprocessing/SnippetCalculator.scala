@@ -34,10 +34,10 @@ object SnippetCalculator extends App with LazyLogging {
 
   val wr = CSVWriter.open("all_snippets.csv")
   wr.writeRow(List("paper", "journal", "method", "assumption"))
-  wr.writeAll(snippets.map(sni => List(sni._1.file.getName, sni._1.journal.name, sni._2.name, sni._3.name)).toList)
+  wr.writeAll(snippets.map(sni => List(sni._1.file.getAbsolutePath, sni._1.journal.name, sni._2.name, sni._3.name)).toList)
   var papersWithoutSnippets = mutable.HashSet.empty[Paper] ++ allPapers.toSet
   snippets.foreach(s => papersWithoutSnippets -= s._1)
-  private val csvVersion: List[List[String]] = papersWithoutSnippets.toList.map(p => List(p.file.getName, p.journal.name))
+  private val csvVersion: List[List[String]] = papersWithoutSnippets.toList.map(p => List(p.file.getAbsolutePath, p.journal.name))
   wr.writeAll(csvVersion)
   wr.close()
 
