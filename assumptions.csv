@@ -1,12 +1,8 @@
-Independen,randomly
-Homogeneity of variance,same variance,equal variance,sphericity,homoscedasticity,Constant variance
-homogeneity of regression slopes
+Independen,Independence
+Homogeneity of variance,same variance,equal variance,sphericity,homoscedasticity,Constant variance,homogen
+homogeneity of regression slopes,same regression slopes,equal  regression slopes,constant regression slopes,homogen
+Homogeneity of covariance matrices,Homogeneity of covariances,same covariances,equal covariances,sphericity,homoscedasticity,Constant covariances,homogen
+linearity,linear
+lack of multicollinearity,lack of collinearity,not multicollineariar terms,not collinear terms,independent variables,not correlated variables,not milticolinear variables,variables not correlated,variablesnot collinear,variables not multicolinear,colinear
+Expected cell count,20% rule,20 rule,expected frequency count,expected frequencies rule,expected cells rule,more than 20% of the expected counts should be at least five,more than 20% of the expected counts are at least five,more than 20% of the expected counts should be at least 5,more than 20% of the expected counts are at least 5,at least 20% of the expected counts should be at least five,at least 20% of the expected counts are at least five,at least 20% of the expected counts should be at least 5,at least 20% of the expected counts are at least 5
 Normal,gaussian,bell,normal error,Multivariate normality
-interval,ratio
-Homoscedasticity
-outliers
-ordinal
-multicollinearity
-linearity
-linearity of independent variable,linearity of log odds
-categorical,dichotomous

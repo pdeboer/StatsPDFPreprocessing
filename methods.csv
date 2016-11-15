@@ -1,16 +1,5 @@
-ANOVA,analysis of variance
-Pearson,Pearson's correlation,Pearson's r,Pearson product moment correlation
-Spearman,Spearman's correlation,Spearman's rank order correlation
-Correlation,R square,R squared,R 2 adjusted
-Linear regression,Ordinary least squares regression
-Multiple regression,Multiple Linear Regression
-Logistic regression
-t test,t-test
-U test,Mann Whitney
-Kappa,Kendall Tau,Bland Altman,Youden J
-Kruskal Wallis test
-ANCOVA,Analysis of covariance
-Wilcoxon Signed Ranks test, Wilcoxon Signed-Ranks test, Wilcoxon test, Wilcoxon-test, Wilcoxon Signed Rank, Wilcoxon Signed-Rank,
-Dum test,Dum's test
-MANOVA,multivariate analysis of variance
-Mantel Haenszel
+t-test, t test,Student's t test,Student's test,Student test,Student t test,Student's t-test,Student t-test
+ANOVA, Analysis of variance,Anova test, Analysis of variance test
+Linear regression, Multiple regression,Ordinary least Squares,Trendline analysis,Linear model ,OLS,Trendline regression,Linear least Squares,linear prediction,linear forecasting, simple linear regression,linear regression analysis,multiple linear regression,simple linear regression analysis,linear regression analysis,simple regression analysis,linear model,simle linear model,simple linear regression,linear trend analysis,general linear model
+chi square,chi-square,X2,X^2,chi^2,chi2,Pearson,Pearson's test,Χ square,χ square, Χ-square, χ-square, χ2
+Logistic regression,Logit
