@@ -1,6 +1,6 @@
 Independen,Independence
 Homogeneity of variance,same variance,equal variance,sphericity,homoscedasticity,Constant variance,homogen
-homogeneity of regression slopes,same regression slopes,equal  regression slopes,constant regression slopes,homogen
+Homogeneity of regression slopes,same regression slopes,equal  regression slopes,constant regression slopes,homogen
 Homogeneity of covariance matrices,Homogeneity of covariances,same covariances,equal covariances,sphericity,homoscedasticity,Constant covariances,homogen
 linearity,linear
 lack of multicollinearity,lack of collinearity,not multicollineariar terms,not collinear terms,independent variables,not correlated variables,not milticolinear variables,variables not correlated,variablesnot collinear,variables not multicolinear,colinear
