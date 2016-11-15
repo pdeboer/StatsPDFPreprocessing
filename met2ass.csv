@@ -4,14 +4,6 @@ t test,Homogeneity of variance
 ANOVA,Independen
 ANOVA,Normal
 ANOVA,Homogeneity of variance
-MANOVA,Independen
-MANOVA,Normal
-MANOVA,Homogeneity of covariance matrices
-ANCOVA,Normal
-ANCOVA,Homogeneity of variance
-ANCOVA,Independen
-ANCOVA,linearity
-ANCOVA,Homogeneity of regression slopes
 Linear regression,Homogeneity of variance
 Linear regression,Normal
 Linear regression,lack of multicollinearity
