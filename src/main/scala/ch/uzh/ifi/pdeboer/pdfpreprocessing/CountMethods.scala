@@ -14,7 +14,7 @@ object CountMethods extends App {
   val path = new File("/Users/pdeboer/ownCloud/Privat/schule/phd/projects/stats Mike/all papers txt")
   //val path = new File("testpdfs/CHI")
 
-  val methods: List[StatisticalMethod] = CSVReader.open(new File("methodlist_full.csv")).all().map(t => StatisticalMethod(t.head, t.drop(1), Nil))
+  val methods: List[StatisticalMethod] = CSVReader.open(new File("methods.csv")).all().map(t => StatisticalMethod(t.head, t.drop(1), Nil))
   val journals = path.listFiles().filter(_.isDirectory)
   val journalPapers = journals.map(j => j -> getTXTFiles(j).par.map(p => new TXTPaper(p))).toMap
 
@@ -25,6 +25,11 @@ object CountMethods extends App {
   }).toList
   wr.writeAll(data)
   wr.close()
+
+  val wr2 = CSVWriter.open("methods_per_paper.csv")
+  wr2.writeRow("paper" :: methods.map(_.name))
+  wr2.writeAll(journalPapers.flatMap(j => j._2).map(p => p.path.getAbsolutePath :: methods.map(m => p.methodMap(m)).toList).toList)
+  wr2.close()
 
   def getTXTFiles(folder: File): List[File] = {
     val descendantFiles = folder.listFiles().filter(f => f.isDirectory).flatMap(f => getTXTFiles(f)).toList
